@@ -1,23 +1,26 @@
 import dayjs from 'dayjs';
-import {getDateISO, getDateHoursMinutes, getDateMonthDay} from '../util.js';
+import {getDateISO, getDateHoursMinutes, getDateMonthDay, getDateFormat, createElement} from '../util.js';
 
-const MINUTES_IN_DAY = 1440;//минуты в дне
-const MINUTES_IN_HOUR = 60;// минуты в часе
+const MILLISECONDS_IN_DAY = 86400000;
+const MILLISECONDS_IN_HOURS = 3600000;
 
-export const createRoutePointInList = (data) => {
+const createRoutePointInList = (data) => {
   const {type, name, timeFrom, timeTo, price, offers, isFavorite} = data;
 
+
   const getDueDate = () => {
-    const counterMinute = 60;
-    const deuDate = (timeTo - timeFrom) * counterMinute;
-    if (deuDate <= MINUTES_IN_DAY) {
+    const startDate = dayjs(getDateFormat(timeFrom));
+    const endDate = dayjs(getDateFormat(timeTo));
+    const deuDate = endDate.diff(startDate);
+    if (deuDate <= MILLISECONDS_IN_DAY) {
       return `${dayjs(deuDate).format('hh')  }H ${  dayjs(deuDate).format('mm')  }M`;
-    }else if (deuDate > MINUTES_IN_DAY) {
+    }else if (deuDate > MILLISECONDS_IN_DAY) {
       return `${dayjs(deuDate).format('DD')  }D ${  dayjs(deuDate).format('DD')  }H ${  dayjs(deuDate).format('mm')  }M`;
-    } else if (deuDate <= MINUTES_IN_HOUR) {
+    } else if (deuDate <= MILLISECONDS_IN_HOURS) {
       return `${dayjs(deuDate).format('mm')  }M`;
     }
   };
+
   const createOfferElement =  (offer) =>`<li class="event__offer">
       <span class="event__offer-title">${offer.title}</span>
       &plus;&euro;&nbsp;
@@ -27,8 +30,8 @@ export const createRoutePointInList = (data) => {
 
   const offersList = offers.map((item) => createOfferElement(item)).join(' ');
 
-  return `<ul class="trip-events__list">
-  <li class="trip-events__item">
+
+  return `<li class="trip-events__item">
     <div class="event">
       <time class="event__date" datetime="${getDateISO(timeFrom)}">${getDateMonthDay(timeFrom)}</time>
       <div class="event__type">
@@ -60,6 +63,27 @@ export const createRoutePointInList = (data) => {
         <span class="visually-hidden">Open event</span>
       </button>
     </div>
-  </li>
-  </ul>`;
+  </li>`;
 };
+
+export default class ListPoint {
+  constructor(data) {
+    this._data = data;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createRoutePointInList(this._data);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

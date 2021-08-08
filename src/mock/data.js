@@ -2,8 +2,8 @@ import dayjs from 'dayjs';
 import {getRandomInteger, getRandomArray} from '../util.js';
 
 const HOURS_GAP = 24;
-const MIN_EVENT_DURATION = 1; // 1 час
-const MAX_EVENT_DURATION = 168; // 7 дней
+const MIN_EVENT_DURATION_IN_MINUTES = 60;
+const MAX_EVENT_DURATION_IN_MINUTES = 10080; // 7 days
 
 const TYPES = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-In', 'Sightseeing', 'Restaurant'];
 const POINTS_CITIES = ['Budapest', 'Barcelona', 'Hamburg', 'Paris'];
@@ -47,10 +47,9 @@ const getPhotoOfDestination = function () {
   return  new Array(getRandomInteger(0, 5)).fill().map(() => generatePhotoOfDestination());
 };
 
-
 const generateData = () => {
   const startTime = dayjs().add(getRandomInteger(-HOURS_GAP, HOURS_GAP), 'hour').toDate();
-  const endTime = dayjs(startTime).add(getRandomInteger(MIN_EVENT_DURATION, MAX_EVENT_DURATION), 'minute').toDate();
+  const endTime = dayjs(startTime).add(getRandomInteger(MIN_EVENT_DURATION_IN_MINUTES, MAX_EVENT_DURATION_IN_MINUTES), 'minute').toDate();
   return {
     type: TYPES[getRandomInteger(0, TYPES.length - 1)],
     name: POINTS_CITIES[getRandomInteger(0, POINTS_CITIES.length - 1)],

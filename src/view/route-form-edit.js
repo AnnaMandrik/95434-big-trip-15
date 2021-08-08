@@ -1,8 +1,7 @@
-//import dayjs from 'dayjs';
-import {getDateFormat} from '../util.js';
+import {getDateFormat, createElement} from '../util.js';
 
 
-export const createRouteFormEdit = (data) => {
+const createRouteFormEdit = (data) => {
   const {type,
     name,
     timeFrom,
@@ -23,13 +22,13 @@ export const createRouteFormEdit = (data) => {
 
   const createOfferMarkup = (offer) =>
     `<div class="event__offer-selector">
-                            <input class="event__offer-checkbox  visually-hidden" id="${offer.title}" type="checkbox" name="event-offer-${offer.title}"}>
-                            <label class="event__offer-label" for="${offer.title}">
-                              <span class="event__offer-title">${offer.title}</span>
-                              &plus;&euro;&nbsp;
-                              <span class="even__offer-price">${offer.price}</span>
-                            </label>
-                          </div>`;
+      <input class="event__offer-checkbox  visually-hidden" id="${offer.title}" type="checkbox" name="event-offer-${offer.title}"}>
+      <label class="event__offer-label" for="${offer.title}">
+        <span class="event__offer-title">${offer.title}</span>
+        &plus;&euro;&nbsp;
+        <span class="even__offer-price">${offer.price}</span>
+      </label>
+    </div>`;
 
 
   const offersMarkup = offers.map((item) => createOfferMarkup(item)).join(' ');
@@ -109,3 +108,25 @@ export const createRouteFormEdit = (data) => {
   </form>
 </li>`;
 };
+
+export default class FormPoint {
+  constructor(data) {
+    this._data = data;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createRouteFormEdit(this._data);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
