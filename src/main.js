@@ -21,30 +21,16 @@ const tripControlsNaElement = tripMainElement.querySelector('.trip-controls__nav
 const tripControlsFiltersElement = tripMainElement.querySelector('.trip-controls__filters');
 const tripEventsElement = document.querySelector('.trip-events');
 
-
-const sortTripPointsByStart = () => data.slice().sort((pointA, pointB) => dayjs(pointA.timeFrom).diff(pointB.timeFrom));
-const tripPointsSortedByStart = sortTripPointsByStart(data);
-render(tripMainElement, new RouteInfoView(tripPointsSortedByStart).getElement(), RenderPosition.AFTERBEGIN); //Инфо о путешествии
-render(tripControlsNaElement, new SiteMenuView().getElement(), RenderPosition.BEFOREEND); // Меню
-render(tripControlsFiltersElement, new SiteFiltersView().getElement(), RenderPosition.BEFOREEND); //Фильтры
-
-
-render(tripEventsElement, new TripSortView().getElement(), RenderPosition.AFTERBEGIN); //Заголовки сортировки
-render(tripEventsElement, new EmptyListView().getElement(), RenderPosition.AFTERBEGIN); //Пустая форма создания
-
-const tripEventsListComponent = new TripEventsListView();   //Список точек
-render(tripEventsElement, tripEventsListComponent.getElement(), RenderPosition.BEFOREEND);
-
 const renderPoint = (tripEventsListElement, task) => {     //смена точки на форму
   const pointComponent = new FormPointView(task).getElement();
   const pointListComponent = new ListPointView(task).getElement();
 
   const replaceCardToForm = () => {
-    tripEventsListElement.replaceChild(pointListComponent, pointComponent);
+    tripEventsListElement.replaceChild(pointComponent, pointListComponent);
   };
 
   const replaceFormToCard = () => {
-    tripEventsListElement.replaceChild(pointComponent, pointListComponent);
+    tripEventsListElement.replaceChild(pointListComponent, pointComponent);
   };
 
   pointListComponent.querySelector('.event__rollup-btn').addEventListener('click', () => {
@@ -59,6 +45,25 @@ const renderPoint = (tripEventsListElement, task) => {     //смена точк
   render(tripEventsListElement, pointComponent, RenderPosition.BEFOREEND);
 };
 
+const sortTripPointsByStart = () => data.slice().sort((pointA, pointB) => dayjs(pointA.timeFrom).diff(pointB.timeFrom));
+const tripPointsSortedByStart = sortTripPointsByStart(data);
+render(tripMainElement, new RouteInfoView(tripPointsSortedByStart).getElement(), RenderPosition.AFTERBEGIN); //Инфо о путешествии
+render(tripControlsNaElement, new SiteMenuView().getElement(), RenderPosition.BEFOREEND); // Меню
+render(tripControlsFiltersElement, new SiteFiltersView().getElement(), RenderPosition.BEFOREEND); //Фильтры
+
+
+render(tripEventsElement, new TripSortView().getElement(), RenderPosition.AFTERBEGIN); //Заголовки сортировки
+render(tripEventsElement, new EmptyListView().getElement(), RenderPosition.AFTERBEGIN); //Пустая форма создания
+
+const tripEventsListComponent = new TripEventsListView();   //Список точек ul
+render(tripEventsElement, tripEventsListComponent.getElement(), RenderPosition.BEFOREEND);
+
+
 data.forEach((task) => {
   renderPoint(tripEventsListComponent.getElement(), task);
 });
+
+// for (let i = 0; i < POINT_COUNT; i++) {
+//   renderPoint(tripEventsListComponent.getElement(), data[i]);
+// }
+
