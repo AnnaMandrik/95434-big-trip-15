@@ -1,6 +1,8 @@
 import dayjs from 'dayjs';
+import {createElement} from '../util.js';
 
-export const createRouteInfoTemplate = (data) => {
+
+const createRouteInfoTemplate = (data) => {
   const MAX_PATH_DISPLAY_LENGTH = 3;
   let totalCost = 0;
 
@@ -41,3 +43,25 @@ export const createRouteInfoTemplate = (data) => {
       </p>
     </section>`;
 };
+
+export default class RouteInfo {
+  constructor(data) {
+    this._data = data;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createRouteInfoTemplate(this._data);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
