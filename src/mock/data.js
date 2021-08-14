@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {getRandomInteger, getRandomArray} from '../util.js';
+import {getRandomInteger, getRandomArray} from '../utils/common.js';
 
 const HOURS_GAP = 24;
 const MIN_EVENT_DURATION_IN_MINUTES = 60;

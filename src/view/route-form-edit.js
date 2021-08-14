@@ -1,12 +1,13 @@
-import {getDateFormat, createElement} from '../util.js';
+import {getDateFormat} from '../utils/task.js';
+import AbstractView from './abstract.js';
+import dayjs from 'dayjs';
 
-
-const createRouteFormEdit = (data) => {
+const createRouteFormEdit = (data = {}) => {
   const {type,
     name,
-    timeFrom,
-    timeTo,
-    price,
+    timeFrom = dayjs().toDate(),
+    timeTo = dayjs(timeFrom).add(1, 'hour'),
+    price = 0,
     offers,
     info,
     photo,
@@ -17,8 +18,11 @@ const createRouteFormEdit = (data) => {
         <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type}</label>
       </div>`;
 
-  const createPictureMarkup = () => photo.map((item) => `<img class="event__photo" src="${item.src}" alt="${item.description}">`).join(' ');
+  // const createNameDataList = () => `<datalist id="destination-list-1">
+  //           <option value="${name.names}"></option>
+  //         </datalist>`;
 
+  // const nameDataList = names.map((item) => createNameDataList(item)).join('');
 
   const createOfferMarkup = (offer) =>
     `<div class="event__offer-selector">
@@ -33,6 +37,31 @@ const createRouteFormEdit = (data) => {
 
   const offersMarkup = offers.map((item) => createOfferMarkup(item)).join(' ');
 
+  const createOffersSectionContainer =() => offersMarkup
+    ? `<section class="event__section  event__section--offers">
+         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+
+        <div class="event__available-offers">
+          ${offersMarkup}
+        </div>
+      </section>`
+    : '';
+
+  const createPictureMarkup = () => photo
+    ? photo.map((item) => `<img class="event__photo" src="${item.src}" alt="${item.description}">`).join(' ')
+    : '';
+
+  const createDestinationSectionContainer = () => info || createPictureMarkup
+    ? `<section class="event__section  event__section--destination">
+        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+        <p class="event__destination-description">${info}</p>
+        <div class="event__photos-container">
+          <div class="event__photos-tape">
+            ${createPictureMarkup()}
+          </div>
+        </div>
+      </section>`
+    : '';
 
   return `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
@@ -58,10 +87,10 @@ const createRouteFormEdit = (data) => {
         </label>
         <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
         <datalist id="destination-list-1">
-        <option value="${name}"></option>
-        <option value="${name}"></option>
-        <option value="${name}"></option>
-        </datalist>
+            <option value="${name}"></option>
+            <option value="${name}"></option>
+            <option value="${name}"></option>
+       </datalist>
       </div>
 
       <div class="event__field-group  event__field-group--time">
@@ -87,46 +116,32 @@ const createRouteFormEdit = (data) => {
       </button>
     </header>
     <section class="event__details">
-      <section class="event__section  event__section--offers">
-        <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+      ${createOffersSectionContainer()}
 
-        <div class="event__available-offers">
-          ${offersMarkup}
-        </div>
-      </section>
-
-      <section class="event__section  event__section--destination">
-        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">${info}</p>
-        <div class="event__photos-container">
-        <div class="event__photos-tape">
-        ${createPictureMarkup()}
-        </div>
-      </div>
-        </section>
+      ${createDestinationSectionContainer()}
     </section>
   </form>
 </li>`;
 };
 
-export default class FormPoint {
+export default class FormPoint extends AbstractView{
   constructor(data) {
+    super();
     this._data = data;
-    this._element = null;
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
   }
 
   getTemplate() {
     return createRouteFormEdit(this._data);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
   }
 
-  removeElement() {
-    this._element = null;
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
   }
 }

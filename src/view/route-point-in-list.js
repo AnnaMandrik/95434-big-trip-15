@@ -1,25 +1,42 @@
 import dayjs from 'dayjs';
-import {getDateISO, getDateHoursMinutes, getDateMonthDay, getDateFormat, createElement} from '../util.js';
+import {getDateISO, getDateHoursMinutes, getDateMonthDay} from '../utils/task.js';
+import AbstractView from './abstract.js';
 
-const MILLISECONDS_IN_DAY = 86400000;
-const MILLISECONDS_IN_HOURS = 3600000;
+const MINUTES_IN_A_DAY = 1440;
+const MINUTES_IN_A_HOUR = 60;
 
 const createRoutePointInList = (data) => {
-  const {type, name, timeFrom, timeTo, price, offers, isFavorite} = data;
+  const {type, name, price, offers, isFavorite} = data;
+  let {timeFrom, timeTo} = data;
+
+  const padNumberWithZeros = (number, padCount = 2) =>
+    Number(number).toString(10).padStart(padCount, '0');
 
 
-  const getDueDate = () => {
-    const startDate = dayjs(getDateFormat(timeFrom));
-    const endDate = dayjs(getDateFormat(timeTo));
-    const deuDate = endDate.diff(startDate);
-    if (deuDate <= MILLISECONDS_IN_DAY) {
-      return `${dayjs(deuDate).format('hh')  }H ${  dayjs(deuDate).format('mm')  }M`;
-    }else if (deuDate > MILLISECONDS_IN_DAY) {
-      return `${dayjs(deuDate).format('DD')  }D ${  dayjs(deuDate).format('DD')  }H ${  dayjs(deuDate).format('mm')  }M`;
-    } else if (deuDate <= MILLISECONDS_IN_HOURS) {
-      return `${dayjs(deuDate).format('mm')  }M`;
+  const formatTripEventDuration = (durationInMinutes) => {
+    let formattedDuration = '';
+    const daysNumber = Math.floor(durationInMinutes / MINUTES_IN_A_DAY);
+    const hoursNumber = Math.floor(durationInMinutes / MINUTES_IN_A_HOUR);
+    let leftMinutes;
+
+    if (daysNumber) {
+      const leftHours = Math.floor((durationInMinutes - daysNumber * MINUTES_IN_A_DAY) / MINUTES_IN_A_HOUR);
+      leftMinutes = durationInMinutes - daysNumber * MINUTES_IN_A_DAY - leftHours * MINUTES_IN_A_HOUR;
+      formattedDuration = `${padNumberWithZeros(daysNumber)}D ${padNumberWithZeros(leftHours)}H ${padNumberWithZeros(leftMinutes)}M`;
+    } else if (hoursNumber) {
+      leftMinutes = durationInMinutes - hoursNumber * MINUTES_IN_A_HOUR;
+      formattedDuration = `${padNumberWithZeros(hoursNumber)}H ${padNumberWithZeros(leftMinutes)}M`;
+    } else {
+      formattedDuration = `${padNumberWithZeros(leftMinutes)}M`;
     }
+
+    return formattedDuration;
   };
+
+  timeFrom = dayjs(timeFrom);
+  timeTo = dayjs(timeTo);
+  const tripEventDuration = formatTripEventDuration(timeTo.diff(timeFrom, 'minute'));
+
 
   const createOfferElement =  (offer) =>`<li class="event__offer">
       <span class="event__offer-title">${offer.title}</span>
@@ -44,7 +61,7 @@ const createRoutePointInList = (data) => {
           &mdash;
           <time class="event__end-time" datetime=${getDateISO(timeTo)}>${getDateHoursMinutes(timeTo)}</time>
         </p>
-        <p class="event__duration">${getDueDate()}</p>
+        <p class="event__duration">${tripEventDuration}</p>
       </div>
       <p class="event__price">
         &euro;&nbsp;<span class="event__price-value">${price}</span>
@@ -66,24 +83,25 @@ const createRoutePointInList = (data) => {
   </li>`;
 };
 
-export default class ListPoint {
+export default class ListPoint extends AbstractView{
   constructor(data) {
+    super();
     this._data = data;
-    this._element = null;
+
+    this._editClickHandler = this._editClickHandler.bind(this);
   }
 
   getTemplate() {
     return createRoutePointInList(this._data);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
+  _editClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setEditClickHandler(callback) {
+    this._callback.editClick = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
   }
 }

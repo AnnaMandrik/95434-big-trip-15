@@ -8,7 +8,7 @@ import FormPointView from './view/route-form-edit.js';
 import TripEventsListView from './view/points-list.js';
 import {generateData} from './mock/data.js';
 import dayjs from 'dayjs';
-import {RenderPosition, render} from './util.js';
+import {RenderPosition, render,replace} from './utils/render.js';
 
 
 const POINT_COUNT = 15;
@@ -22,23 +22,22 @@ const tripControlsFiltersElement = tripMainElement.querySelector('.trip-controls
 const tripEventsElement = document.querySelector('.trip-events');
 
 const renderPoint = (tripEventsListElement, task) => {     //смена точки на форму
-  const pointComponent = new FormPointView(task).getElement();
-  const pointListComponent = new ListPointView(task).getElement();
+  const pointComponent = new FormPointView(task);
+  const pointInListComponent = new ListPointView(task);
 
   const replaceCardToForm = () => {
-    tripEventsListElement.replaceChild(pointComponent, pointListComponent);
+    replace(pointComponent, pointInListComponent);
   };
 
   const replaceFormToCard = () => {
-    tripEventsListElement.replaceChild(pointListComponent, pointComponent);
+    replace(pointInListComponent, pointComponent);
   };
 
-  pointListComponent.querySelector('.event__rollup-btn').addEventListener('click', () => {
+  pointInListComponent.setEditClickHandler(() => {
     replaceCardToForm();
   });
 
-  pointComponent.querySelector('form').addEventListener('submit', (evt) => {
-    evt.preventDefault();
+  pointComponent.setFormSubmitHandler(() => {
     replaceFormToCard();
   });
 
@@ -47,23 +46,19 @@ const renderPoint = (tripEventsListElement, task) => {     //смена точк
 
 const sortTripPointsByStart = () => data.slice().sort((pointA, pointB) => dayjs(pointA.timeFrom).diff(pointB.timeFrom));
 const tripPointsSortedByStart = sortTripPointsByStart(data);
-render(tripMainElement, new RouteInfoView(tripPointsSortedByStart).getElement(), RenderPosition.AFTERBEGIN); //Инфо о путешествии
-render(tripControlsNaElement, new SiteMenuView().getElement(), RenderPosition.BEFOREEND); // Меню
-render(tripControlsFiltersElement, new SiteFiltersView().getElement(), RenderPosition.BEFOREEND); //Фильтры
+render(tripMainElement, new RouteInfoView(tripPointsSortedByStart), RenderPosition.AFTERBEGIN); //Инфо о путешествии
+render(tripControlsNaElement, new SiteMenuView(), RenderPosition.BEFOREEND); // Меню
+render(tripControlsFiltersElement, new SiteFiltersView(), RenderPosition.BEFOREEND); //Фильтры
 
 
-render(tripEventsElement, new TripSortView().getElement(), RenderPosition.AFTERBEGIN); //Заголовки сортировки
-render(tripEventsElement, new EmptyListView().getElement(), RenderPosition.AFTERBEGIN); //Пустая форма создания
+render(tripEventsElement, new TripSortView(), RenderPosition.AFTERBEGIN); //Заголовки сортировки
+render(tripEventsElement, new EmptyListView(), RenderPosition.AFTERBEGIN); //Пустая форма создания
 
 const tripEventsListComponent = new TripEventsListView();   //Список точек ul
-render(tripEventsElement, tripEventsListComponent.getElement(), RenderPosition.BEFOREEND);
+render(tripEventsElement, tripEventsListComponent, RenderPosition.BEFOREEND);
 
 
 data.forEach((task) => {
-  renderPoint(tripEventsListComponent.getElement(), task);
+  renderPoint(tripEventsListComponent, task);
 });
-
-// for (let i = 0; i < POINT_COUNT; i++) {
-//   renderPoint(tripEventsListComponent.getElement(), data[i]);
-// }
 
