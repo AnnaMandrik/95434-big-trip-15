@@ -89,6 +89,7 @@ export default class ListPoint extends AbstractView{
     this._data = data;
 
     this._editClickHandler = this._editClickHandler.bind(this);
+    this._editFavoriteClickHandler = this._editFavoriteClickHandler.bind(this);
   }
 
   getTemplate() {
@@ -103,5 +104,15 @@ export default class ListPoint extends AbstractView{
   setEditClickHandler(callback) {
     this._callback.editClick = callback;
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
+  }
+
+  _editFavoriteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editFavoriteClick();
+  }
+
+  setEditFavoriteClickHandler(callback) {
+    this._callback.editFavoriteClick = callback;
+    this.getElement().querySelector('.event__favorite-btn').addEventListener('click', this._editFavoriteClickHandler);
   }
 }

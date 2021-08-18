@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import {getRandomInteger, getRandomArray} from '../utils/common.js';
+import {nanoid} from 'nanoid';
 
 const HOURS_GAP = 24;
 const MIN_EVENT_DURATION_IN_MINUTES = 60;
@@ -51,6 +52,7 @@ const generateData = () => {
   const startTime = dayjs().add(getRandomInteger(-HOURS_GAP, HOURS_GAP), 'hour').toDate();
   const endTime = dayjs(startTime).add(getRandomInteger(MIN_EVENT_DURATION_IN_MINUTES, MAX_EVENT_DURATION_IN_MINUTES), 'minute').toDate();
   return {
+    id: nanoid(),
     type: TYPES[getRandomInteger(0, TYPES.length - 1)],
     name: POINTS_CITIES[getRandomInteger(0, POINTS_CITIES.length - 1)],
     timeFrom: startTime,
