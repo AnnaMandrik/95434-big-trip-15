@@ -20,6 +20,7 @@ export default class TripPoint {
     this._handleEditClick = this._handleEditClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+    this._onEventEscKeyDown = this._onEventEscKeyDown.bind(this);
   }
 
   init(data) {
@@ -34,6 +35,7 @@ export default class TripPoint {
     this._pointInListComponent.setEditClickHandler(this._handleEditClick);
     this._pointComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointInListComponent.setEditFavoriteClickHandler(this._handleFavoriteClick);
+    this._pointComponent.setCloseFormButtonClickHandler(this._handleFormSubmit);
 
     if (prevPointComponent === null || prevPointInListComponent === null) {
       render(this._formPointContainer, this._pointInListComponent, RenderPosition.BEFOREEND);
@@ -65,13 +67,22 @@ export default class TripPoint {
 
   _replaceCardToForm() {
     replace(this._pointComponent, this._pointInListComponent);
+    document.addEventListener('keydown', this._onEventEscKeyDown);
     this._changeMode();
     this._mode = Mode.EDITING;
   }
 
   _replaceFormToCard() {
     replace(this._pointInListComponent, this._pointComponent);
+    document.removeEventListener('keydown', this._onEventEscKeyDown);
     this._mode = Mode.DEFAULT;
+  }
+
+  _onEventEscKeyDown(evt) {
+    if( evt.key === 'Escape' ||  evt.key === 'Esc') {
+      evt.preventDefault();
+      this._replaceFormToCard();
+    }
   }
 
   _handleEditClick() {

@@ -129,6 +129,7 @@ export default class FormPoint extends AbstractView{
     super();
     this._data = data;
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._closeFormButtonClickHandler = this._closeFormButtonClickHandler.bind(this);
   }
 
   getTemplate() {
@@ -143,5 +144,15 @@ export default class FormPoint extends AbstractView{
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
+  }
+
+  _closeFormButtonClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.closeFormButtonClickHandler();
+  }
+
+  setCloseFormButtonClickHandler(callback) {
+    this._callback.closeFormButtonClickHandler = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click',  this._closeFormButtonClickHandler);
   }
 }
