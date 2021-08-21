@@ -71,7 +71,10 @@ export default class TripRoute {
 
   _renderContainer() {
     this._renderSort();
-    this._renderEmptyList();
+    if(this._data.length === 0) {
+      this._renderEmptyList();
+      return;
+    }
     this._renderTripEventsList();
   }
 }
