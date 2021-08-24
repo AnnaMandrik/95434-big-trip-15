@@ -1,41 +1,41 @@
-import dayjs from 'dayjs';
-import {getDateISO, getDateHoursMinutes, getDateMonthDay} from '../utils/task.js';
+// import dayjs from 'dayjs';
+import {getDateISO, getDateHoursMinutes, getDateMonthDay, getDiffDate} from '../utils/task.js';
 import AbstractView from './abstract.js';
 
-const MINUTES_IN_A_DAY = 1440;
-const MINUTES_IN_A_HOUR = 60;
+// const MINUTES_IN_A_DAY = 1440;
+// const MINUTES_IN_A_HOUR = 60;
 
 const createRoutePointInList = (data) => {
-  const {type, name, price, offers, isFavorite} = data;
-  let {timeFrom, timeTo} = data;
+  const {type, name, price, offers, isFavorite, timeFrom, timeTo} = data;
+  // let {timeFrom, timeTo} = data;
 
-  const padNumberWithZeros = (number, padCount = 2) =>
-    Number(number).toString(10).padStart(padCount, '0');
+  // const padNumberWithZeros = (number, padCount = 2) =>
+  //   Number(number).toString(10).padStart(padCount, '0');
 
 
-  const formatTripEventDuration = (durationInMinutes) => {
-    let formattedDuration = '';
-    const daysNumber = Math.floor(durationInMinutes / MINUTES_IN_A_DAY);
-    const hoursNumber = Math.floor(durationInMinutes / MINUTES_IN_A_HOUR);
-    let leftMinutes;
+  // const formatTripEventDuration = (durationInMinutes) => {
+  //   let formattedDuration = '';
+  //   const daysNumber = Math.floor(durationInMinutes / MINUTES_IN_A_DAY);
+  //   const hoursNumber = Math.floor(durationInMinutes / MINUTES_IN_A_HOUR);
+  //   let leftMinutes;
 
-    if (daysNumber) {
-      const leftHours = Math.floor((durationInMinutes - daysNumber * MINUTES_IN_A_DAY) / MINUTES_IN_A_HOUR);
-      leftMinutes = durationInMinutes - daysNumber * MINUTES_IN_A_DAY - leftHours * MINUTES_IN_A_HOUR;
-      formattedDuration = `${padNumberWithZeros(daysNumber)}D ${padNumberWithZeros(leftHours)}H ${padNumberWithZeros(leftMinutes)}M`;
-    } else if (hoursNumber) {
-      leftMinutes = durationInMinutes - hoursNumber * MINUTES_IN_A_HOUR;
-      formattedDuration = `${padNumberWithZeros(hoursNumber)}H ${padNumberWithZeros(leftMinutes)}M`;
-    } else {
-      formattedDuration = `${padNumberWithZeros(leftMinutes)}M`;
-    }
+  //   if (daysNumber) {
+  //     const leftHours = Math.floor((durationInMinutes - daysNumber * MINUTES_IN_A_DAY) / MINUTES_IN_A_HOUR);
+  //     leftMinutes = durationInMinutes - daysNumber * MINUTES_IN_A_DAY - leftHours * MINUTES_IN_A_HOUR;
+  //     formattedDuration = `${padNumberWithZeros(daysNumber)}D ${padNumberWithZeros(leftHours)}H ${padNumberWithZeros(leftMinutes)}M`;
+  //   } else if (hoursNumber) {
+  //     leftMinutes = durationInMinutes - hoursNumber * MINUTES_IN_A_HOUR;
+  //     formattedDuration = `${padNumberWithZeros(hoursNumber)}H ${padNumberWithZeros(leftMinutes)}M`;
+  //   } else {
+  //     formattedDuration = `${padNumberWithZeros(leftMinutes)}M`;
+  //   }
 
-    return formattedDuration;
-  };
+  //   return formattedDuration;
+  // };
 
-  timeFrom = dayjs(timeFrom);
-  timeTo = dayjs(timeTo);
-  const tripEventDuration = formatTripEventDuration(timeTo.diff(timeFrom, 'minute'));
+  // timeFrom = dayjs(timeFrom);
+  // timeTo = dayjs(timeTo);
+  // const tripEventDuration = formatTripEventDuration(timeTo.diff(timeFrom, 'minute'));
 
 
   const createOfferElement =  (offer) =>`<li class="event__offer">
@@ -61,7 +61,7 @@ const createRoutePointInList = (data) => {
           &mdash;
           <time class="event__end-time" datetime=${getDateISO(timeTo)}>${getDateHoursMinutes(timeTo)}</time>
         </p>
-        <p class="event__duration">${tripEventDuration}</p>
+        <p class="event__duration">${getDiffDate(timeTo, timeFrom)}</p>
       </div>
       <p class="event__price">
         &euro;&nbsp;<span class="event__price-value">${price}</span>
