@@ -6,7 +6,7 @@ const HOURS_GAP = 24;
 const MIN_EVENT_DURATION_IN_MINUTES = 60;
 const MAX_EVENT_DURATION_IN_MINUTES = 10080; // 7 days
 
-const TYPES = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-In', 'Sightseeing', 'Restaurant'];
+const TYPES = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Transport', 'Flight', 'Check-In', 'Sightseeing', 'Restaurant'];
 const POINTS_CITIES = ['Budapest', 'Barcelona', 'Hamburg', 'Paris'];
 const DESCRIPTIONS = ['Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   'Cras aliquet varius magna, non porta ligula feugiat eget.',
@@ -21,21 +21,115 @@ const DESCRIPTIONS = ['Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
   'In rutrum ac purus sit amet tempus.',
 ];
 
-const generateOffer = () => {
-  const OFFERS_TITLES = ['Order Uber', 'Rent a car', 'Add luggage', 'Switch to comfort', 'Add meal',
-    'Choose seats', 'Travel by train', 'Add breakfast', 'Book tickets', 'Lunch in city',
-  ];
-  const OFFERS_PRICES = [20, 200, 30, 100, 15, 5, 40, 50];
+// const generateOffer = () => {
+//   const OFFERS_TITLES = ['Order Uber', 'Rent a car', 'Add luggage', 'Switch to comfort', 'Add meal',
+//     'Choose seats', 'Travel by train', 'Add breakfast', 'Book tickets', 'Lunch in city',
+//   ];
+//   const OFFERS_PRICES = [20, 200, 30, 100, 15, 5, 40, 50];
 
-  return {
-    title: OFFERS_TITLES[getRandomInteger(0, OFFERS_TITLES.length -1)],
-    price: OFFERS_PRICES[getRandomInteger(0, OFFERS_PRICES.length -1)],
-  };
-};
+//   return {
+//     title: OFFERS_TITLES[getRandomInteger(0, OFFERS_TITLES.length -1)],
+//     price: OFFERS_PRICES[getRandomInteger(0, OFFERS_PRICES.length -1)],
+//   };
+// };
 
-const getOffers = function() {
-  return new Array(getRandomInteger(0, 5)).fill().map(() => generateOffer());
-};
+// const getOffers = function() {
+//   return new Array(getRandomInteger(0, 5)).fill().map(() => generateOffer());
+// };
+const offerExampleStatic = [
+  {
+    type: 'Taxi',
+    id: nanoid(),
+    offers: {
+      price: 20,
+      title: 'Order Uber',
+    },
+  },
+  {
+    type: 'Flight',
+    id: nanoid(),
+    offers: {
+      price: 30,
+      title: 'Add luggage',
+    },
+  },
+  {
+    type: 'Flight',
+    id: nanoid(),
+    offers: {
+      price: 50,
+      title: 'Switch to comfort',
+    },
+  },
+  {
+    type: 'Flight',
+    id: nanoid(),
+    offers: {
+      price: 15,
+      title: 'Add meal',
+    },
+  },
+  {
+    type: 'Flight',
+    id: nanoid(),
+    offers: {
+      price: 5,
+      title: 'Choose seats',
+    },
+  },
+  {
+    type: 'Flight',
+    id: nanoid(),
+    offers: {
+      price: 40,
+      title: 'Travel by train',
+    },
+  },
+  {
+    type: 'Drive',
+    id: nanoid(),
+    offers: {
+      price: 200,
+      title: 'Rent a car',
+    },
+  },
+  {
+    type: 'Check-In',
+    id: nanoid(),
+    offers: {
+      price: 50,
+      title: 'Add breakfast',
+    },
+  },
+  {
+    type: 'Sightseeing',
+    id: nanoid(),
+    offers: {
+      price: 40,
+      title: 'Book tickets',
+    },
+  },
+  {
+    type: 'Sightseeing',
+    id: nanoid(),
+    offers: {
+      price: 30,
+      title: 'Lunch in city',
+    },
+  },
+
+
+  {
+    type: 'Train',
+    id: nanoid(),
+    offers: {
+      price: 50,
+      title: 'Add meal',
+    },
+  },
+
+];
+
 const generatePhotoOfDestination = () => {
   const photosNumber = getRandomInteger(1,100);
   return {
@@ -48,6 +142,7 @@ const getPhotoOfDestination = function () {
   return  new Array(getRandomInteger(0, 5)).fill().map(() => generatePhotoOfDestination());
 };
 
+const getInfoDescription = () => getRandomArray(DESCRIPTIONS).slice(0, 5).join(' ');
 const generateData = () => {
   const startTime = dayjs().add(getRandomInteger(-HOURS_GAP, HOURS_GAP), 'hour').toDate();
   const endTime = dayjs(startTime).add(getRandomInteger(MIN_EVENT_DURATION_IN_MINUTES, MAX_EVENT_DURATION_IN_MINUTES), 'minute').toDate();
@@ -58,11 +153,11 @@ const generateData = () => {
     timeFrom: startTime,
     timeTo: endTime,
     price: getRandomInteger(5, 200),
-    offers: getOffers(),
-    info:getRandomArray(DESCRIPTIONS).slice(0, 5).join(' '),
+    offers: offerExampleStatic.slice(0, getRandomInteger(0, 5)),
+    info:getInfoDescription(),
     photo: getPhotoOfDestination(),
     isFavorite: Boolean(getRandomInteger(0,1)),
   };
 };
 
-export {generateData};
+export {TYPES, generateData, offerExampleStatic, POINTS_CITIES, getPhotoOfDestination, getInfoDescription};
