@@ -6,6 +6,8 @@ const SORT_TYPE = {
   PRICE: 'Price',
   TIME: 'Time',
 };
+
+
 const SECONDS_IN_DAY = 86400000;
 const SECONDS_IN_HOURS = 3600000;
 
@@ -36,5 +38,7 @@ const sortPrice = (pointA, pointB) => pointB.price - pointA.price;
 const sortTime = (pointA, pointB) =>
   dayjs(pointB.timeTo).diff(dayjs(pointB.timeFrom)) - dayjs(pointA.timeTo).diff(dayjs(pointA.timeFrom));
 
-export {SORT_TYPE, getDiffDate, sortStartDateUp, sortTime, sortPrice, getDateFormat, getDateISO, getDateHoursMinutes, getDateMonthDay};
+const getMarkupIsElemHave = (elem, markup) => elem ? markup : '';
+
+export {SORT_TYPE, getDiffDate,getMarkupIsElemHave, sortStartDateUp, sortTime, sortPrice, getDateFormat, getDateISO, getDateHoursMinutes, getDateMonthDay};
 

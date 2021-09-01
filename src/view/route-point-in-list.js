@@ -38,14 +38,11 @@ const createRoutePointInList = (data) => {
   // const tripEventDuration = formatTripEventDuration(timeTo.diff(timeFrom, 'minute'));
 
 
-  const createOfferElement =  (offer) =>`<li class="event__offer">
-      <span class="event__offer-title">${offer.title}</span>
+  const createOfferElement =  () => offers.map((item) => `<li class="event__offer">
+      <span class="event__offer-title">${item.offers.title}</span>
       &plus;&euro;&nbsp;
-      <span class="event__offer-price">${offer.price}</span>
-    </li>`;
-
-
-  const offersList = offers.map((item) => createOfferElement(item)).join(' ');
+      <span class="event__offer-price">${item.offers.price}</span>
+    </li>`);
 
 
   return `<li class="trip-events__item">
@@ -68,7 +65,7 @@ const createRoutePointInList = (data) => {
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-        ${offersList}
+        ${createOfferElement(data.offers).join('')}
       </ul>
       <button class="event__favorite-btn ${isFavorite ? 'event__favorite-btn--active' : ''}" type="button">
         <span class="visually-hidden">Add to favorite</span>
