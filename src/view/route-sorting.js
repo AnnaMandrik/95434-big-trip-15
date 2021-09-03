@@ -1,5 +1,5 @@
 import AbstractView from './abstract.js';
-import {SORT_TYPE} from '../utils/task.js';
+import {SORT_TYPE} from '../utils/const.js';
 
 const createTripSortingTemplate = () => (
   `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">

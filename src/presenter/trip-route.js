@@ -4,7 +4,8 @@ import TripEventsListView from '../view/points-list.js';
 import TripPointPresenter from '../presenter/trip-point.js';
 import {RenderPosition, render} from '../utils/render.js';
 import {updateItem} from '../utils/common.js';
-import {SORT_TYPE, sortStartDateUp, sortPrice, sortTime} from '../utils/task.js';
+import {sortStartDateUp, sortPrice, sortTime} from '../utils/task.js';
+import {SORT_TYPE} from '../utils/const.js';
 
 
 export default class TripRoute {
