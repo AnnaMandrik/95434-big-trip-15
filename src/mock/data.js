@@ -143,6 +143,7 @@ const getPhotoOfDestination = function () {
 };
 
 const getInfoDescription = () => getRandomArray(DESCRIPTIONS).slice(0, 5).join(' ');
+
 const generateData = () => {
   const startTime = dayjs().add(getRandomInteger(-HOURS_GAP, HOURS_GAP), 'hour').toDate();
   const endTime = dayjs(startTime).add(getRandomInteger(MIN_EVENT_DURATION_IN_MINUTES, MAX_EVENT_DURATION_IN_MINUTES), 'minute').toDate();
@@ -154,7 +155,7 @@ const generateData = () => {
     timeTo: endTime,
     price: getRandomInteger(5, 200),
     offers: offerExampleStatic.slice(0, getRandomInteger(0, 5)),
-    info:getInfoDescription(),
+    info: getInfoDescription(),
     photo: getPhotoOfDestination(),
     isFavorite: Boolean(getRandomInteger(0,1)),
   };

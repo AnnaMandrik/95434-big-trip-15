@@ -11,9 +11,12 @@
     "lint": "eslint --fix --ext .js,.jsx ."
   },
   "devDependencies": {
+    "css-loader": "5.2.7",
     "eslint": "7.31.0",
     "eslint-config-htmlacademy": "4.0.2",
-    "nanoid": "3.1.22",
+    "style-loader": "2.0.0",
+    "webpack": "4.44.2",
+    "webpack-cli": "3.3.12",
     "webpack-dev-server": "3.11.0"
   },
   "engines": {
@@ -21,7 +24,7 @@
   },
   "dependencies": {
     "dayjs": "1.10.6",
-    "webpack": "4.44.2",
-    "webpack-cli": "3.3.12"
+    "nanoid": "3.1.22",
+    "flatpickr": "4.6.9"
   }
 }

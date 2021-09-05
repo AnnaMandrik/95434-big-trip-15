@@ -28,5 +28,6 @@ const updateItem = (items, update) => {
   ];
 };
 
+const getMarkupIsElemHave = (elem, markup) => elem ? markup : '';
 
-export {getRandomInteger, getRandomArray, updateItem};
+export {getRandomInteger, getRandomArray, updateItem, getMarkupIsElemHave};

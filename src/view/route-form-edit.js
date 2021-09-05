@@ -1,70 +1,56 @@
-import {getDateFormat} from '../utils/task.js';
-import dayjs from 'dayjs';
-import { offerExampleStatic, POINTS_CITIES, TYPES, getPhotoOfDestination, getInfoDescription} from '../mock/data.js';
+import {getDateFormat, getMarkupIsElemHave} from '../utils/task.js';
+import {SET_FLATPICKR} from '../utils/const.js';
+import {offerExampleStatic, POINTS_CITIES, TYPES, getPhotoOfDestination, getInfoDescription} from '../mock/data.js';
 import SmartView from './smart.js';
+import flatpickr from 'flatpickr';
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
+const BLANK_DATA = {
+  type: TYPES[0] ,
+  name: POINTS_CITIES[0],
+  timeFrom: getDateFormat(),
+  timeTo: getDateFormat(),
+  price: null,
+  offers: '',
+  info: '',
+  photo: '',
+  id: null,
+};
 
-const createRouteFormEdit = (data) => {
-  const {type,
-    name,
-    timeFrom = dayjs().toDate(),
-    timeTo = dayjs(timeFrom).add(1, 'hour'),
-    price = 0,
-    offers,
-    info,
-    photo,
-    id,
-  } = data;
+// const createNameDataList = (city) => city.map((name) =>
+//   `<option value="${name}"></option>`).join('');
 
-  const createTripTypeItem = ( isChecked = false) => `<div class="event__type-item">
-        <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${isChecked ? 'checked' : ''}>
-        <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type}</label>
-      </div>`;
+const createNameDataList = () => `<datalist id="destination-list-1">
+${POINTS_CITIES.reduce((template, name) => `${template  }<option value="${name}"></option>`, '')}
+</datalist>`;
 
-  const generateTripTypeListTemplate = () =>
-    TYPES.reduce((template, tripType) => template + createTripTypeItem(tripType, tripType === type), '');
+const createTripTypeItem = (type, isChecked = false) => `<div class="event__type-item">
+  <input id="event-type-${type.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type.toLowerCase()}" ${isChecked ? 'checked' : ''}>
+  <label class="event__type-label  event__type-label--${type.toLowerCase()}" for="event-type-${type.toLowerCase()}-1">${type}</label>
+</div>`;
 
-
-  const createNameDataList = (city) => city.map(() =>
-    `<option value="${name}"></option>` ).join('');
-
-  const createOfferMarkup = (item) =>
-    `<div class="event__offer-selector">
+const createOfferMarkup = (offer) => offer
+  ? offer.map((item) => `<div class="event__offer-selector">
     <input class="event__offer-checkbox  visually-hidden" id="${item.type}-${item.id}" " type="checkbox" name="event-offer-${item.type}"}>
     <label class="event__offer-label" for="${item.type}-${item.id}">
       <span class="event__offer-title">${item.offers.title}</span>
       &plus;&euro;&nbsp;
       <span class="even__offer-price">${item.offers.price}</span>
     </label>
-  </div>`;
+  </div>`)
+  : '';
+
+const generateTripTypeListTemplate = (type) =>
+  TYPES.reduce((template, tripType) => template + createTripTypeItem(tripType, tripType === type), '');
 
 
-  const offersMarkup = offers.map((item) => createOfferMarkup(item)).join(' ');
+const createPictureMarkup = (photo) => photo
+  ? photo.map((item) => `<img class="event__photo" src="${item.src}" alt="${item.description}">`).join(' ')
+  : '';
 
-  const createOffersSectionContainer =() => offersMarkup
-    ? `<section class="event__section  event__section--offers">
-         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-        <div class="event__available-offers">
-          ${offersMarkup}
-        </div>
-      </section>`
-    : '';
+const createRouteFormEdit = (data) => {
+  const {type, name, timeFrom, timeTo, price, offers, info, photo, id} = data;
 
-  const createPictureMarkup = () => photo
-    ? photo.map((item) => `<img class="event__photo" src="${item.src}" alt="${item.description}">`).join(' ')
-    : '';
-
-  const createDestinationSectionContainer = () => info || createPictureMarkup
-    ? `<section class="event__section  event__section--destination">
-        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">${info}</p>
-        <div class="event__photos-container">
-          <div class="event__photos-tape">
-            ${createPictureMarkup()}
-          </div>
-        </div>
-      </section>`
-    : '';
 
   return `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
@@ -72,7 +58,7 @@ const createRouteFormEdit = (data) => {
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" for="event-type-toggle-${id}">
           <span class="visually-hidden">Choose event type</span>
-          <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event ${type} icon">
+          <img class="event__type-icon" width="17" height="17" src="img/icons/${type.toLowerCase()}.png" alt="Event ${type} icon">
         </label>
         <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${id}" type="checkbox">
         <div class="event__type-list">
@@ -86,24 +72,24 @@ const createRouteFormEdit = (data) => {
         <label class="event__label  event__type-output" for="event-destination-1">
           ${type}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
-        <datalist id="destination-list-1">
-            ${createNameDataList(POINTS_CITIES)}
-       </datalist>
+        <input class="event__input  event__input--destination" id="event-destination-1" required type="text" name="event-destination" value="${name}" list="destination-list-1">
+
+            ${createNameDataList(name)}
+
       </div>
       <div class="event__field-group  event__field-group--time">
         <label class="visually-hidden" for="event-start-time-1">From</label>
-        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value=${getDateFormat(timeFrom)}>
+        <input class="event__input  event__input--time" id="event-start-time-1" readonly type="text" name="event-start-time" value=${getDateFormat(timeFrom)}>
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">To</label>
-        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value=${getDateFormat(timeTo)}>
+        <input class="event__input  event__input--time" id="event-end-time-1" readonly type="text" name="event-end-time" value=${getDateFormat(timeTo)}>
       </div>
       <div class="event__field-group  event__field-group--price">
         <label class="event__label" for="event-price-1">
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value=${price}>
+        <input class="event__input  event__input--price" id="event-price-1" required type="number" name="event-price" value=${price}>
       </div>
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">Delete</button>
@@ -112,18 +98,34 @@ const createRouteFormEdit = (data) => {
       </button>
     </header>
     <section class="event__details">
-      ${createOffersSectionContainer()}
-      ${createDestinationSectionContainer()}
+     <section class="event__section  event__section--offers">
+        ${offers.length ? '<h3 class="event__section-title  event__section-title--offers">Offers</h3>' : ''}
+          <div class="event__available-offers">
+      ${createOfferMarkup(offers).join('')}
+      </div>
+      </section>
+      <section class="event__section  event__section--destination">
+      ${getMarkupIsElemHave(info, '<h3 class="event__section-title  event__section-title--destination">Destination</h3>')}
+      <p class="event__destination-description">${getMarkupIsElemHave(info, info)}</p>
+      <div class="event__photos-container">
+        <div class="event__photos-tape">
+        ${createPictureMarkup(photo)}
+        </div>
+      </div>
+    </section>
     </section>
   </form>
 </li>`;
 };
 
 export default class FormPoint extends SmartView{
-  constructor(data) {
+  constructor(data = BLANK_DATA) {
     super();
     this._state = FormPoint.parseDataToState(data);
     this._offers = offerExampleStatic;
+    this._startDatepicker = null;
+    this._endDatepicker = null;
+    this._setDate = null;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._closeFormButtonClickHandler = this._closeFormButtonClickHandler.bind(this);
@@ -132,8 +134,12 @@ export default class FormPoint extends SmartView{
     this._destinationChangeHandler =this._destinationChangeHandler.bind(this);
     this._priceInputHandler = this._priceInputHandler.bind(this);
     this._offersSelectionHandler = this._offersSelectionHandler.bind(this);
+    this._startDateChangeHandler = this._startDateChangeHandler.bind(this);
+    this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
 
     this._setInnerHandlers();
+    this._setStartDatepicker();
+    this._setEndDatepicker();
   }
 
   getTemplate() {
@@ -144,10 +150,72 @@ export default class FormPoint extends SmartView{
     this._setInnerHandlers();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setCloseFormButtonClickHandler(this._callback.closeFormButtonClickHandler);
+    this._setStartDatepicker();
+    this._setEndDatepicker();
   }
 
   reset(data) {
     this.updateData(FormPoint.parseDataToState(data));
+  }
+
+  _setStartDatepicker() {
+    if (this._startDatepicker) {
+      this._startDatepicker.destroy();
+      this._startDatepicker = null;
+    }
+    this._setDate = this._state.timeTo;
+
+    this._startDatepicker = flatpickr(
+      this.getElement().querySelector('#event-start-time-1'),
+      Object.assign(
+        {},
+        SET_FLATPICKR,
+        {
+          dafaultDate: this._state.timeFrom,
+          onChange: this._startDateChangeHandler,
+        },
+      ),
+    );
+  }
+
+  _setEndDatepicker() {
+    if (this._endDatepicker) {
+      this._endDatepicker.destroy();
+      this._endDatepicker = null;
+    }
+
+    this._endDatepicker = flatpickr(
+      this.getElement().querySelector('#event-end-time-1'),
+      Object.assign(
+        {},
+        SET_FLATPICKR,
+        {
+          minDate: this._state.timeFrom,
+          onChange: this._endDateChangeHandler,
+        },
+      ),
+    );
+  }
+
+  _startDateChangeHandler([userDate]) {
+    this.updateData({
+      timeFrom: userDate,
+    }, true);
+
+    this._endDatepicker.set('minDate', userDate);
+    this._endDatepicker.set('minTime', userDate);
+
+    if(this._setDate <= userDate) {
+      this._endDatepicker.setDate(userDate);
+      this._setDate = userDate;
+      this._state.timeTo = this._setDate;
+    }
+  }
+
+  _endDateChangeHandler([userDate]) {
+    this.updateData({
+      timeTo: userDate,
+    }, true);
   }
 
   _setInnerHandlers() {
@@ -161,7 +229,7 @@ export default class FormPoint extends SmartView{
     evt.preventDefault();
     this.updateData({
       name: evt.target.value,
-      info:getInfoDescription(),
+      info: getInfoDescription(),
       photo: getPhotoOfDestination(),
     });
   }
@@ -194,7 +262,7 @@ export default class FormPoint extends SmartView{
     const offerCopy = this._offers;
 
     const getFilterOffersForType = () =>  offerCopy.filter((elem) =>
-      this._state.type === elem.type);
+      this._state.type === elem.type.toLowerCase());
 
     this.updateData({
       offers: getFilterOffersForType(),
