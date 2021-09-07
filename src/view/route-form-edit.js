@@ -4,12 +4,14 @@ import {offerExampleStatic, POINTS_CITIES, TYPES, getPhotoOfDestination, getInfo
 import SmartView from './smart.js';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
+import dayjs from 'dayjs';
+import he from 'he';
 
 const BLANK_DATA = {
   type: TYPES[0] ,
-  name: POINTS_CITIES[0],
-  timeFrom: getDateFormat(),
-  timeTo: getDateFormat(),
+  name: [],
+  timeFrom: dayjs().toDate(),
+  timeTo: dayjs().toDate(),
   price: null,
   offers: '',
   info: '',
@@ -72,7 +74,7 @@ const createRouteFormEdit = (data) => {
         <label class="event__label  event__type-output" for="event-destination-1">
           ${type}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" required type="text" name="event-destination" value="${name}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" required type="text" name="event-destination" value="${name ? he.encode(name.toString()) : ''}" list="destination-list-1">
 
             ${createNameDataList(name)}
 
@@ -89,7 +91,7 @@ const createRouteFormEdit = (data) => {
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-1" required type="number" name="event-price" value=${price}>
+        <input class="event__input  event__input--price" id="event-price-1" required type="number" name="event-price" value=${price ? he. encode(price.toString()) : ''}>
       </div>
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">Delete</button>
@@ -99,9 +101,9 @@ const createRouteFormEdit = (data) => {
     </header>
     <section class="event__details">
      <section class="event__section  event__section--offers">
-        ${offers.length ? '<h3 class="event__section-title  event__section-title--offers">Offers</h3>' : ''}
+        ${(offers ? offers.length : '') ? '<h3 class="event__section-title  event__section-title--offers">Offers</h3>' : ''}
           <div class="event__available-offers">
-      ${createOfferMarkup(offers).join('')}
+      ${offers ? createOfferMarkup(offers).join('') : ''}
       </div>
       </section>
       <section class="event__section  event__section--destination">
@@ -129,6 +131,7 @@ export default class FormPoint extends SmartView{
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._closeFormButtonClickHandler = this._closeFormButtonClickHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
 
     this._typeChangeHandler =  this._typeChangeHandler.bind(this);
     this._destinationChangeHandler =this._destinationChangeHandler.bind(this);
@@ -152,6 +155,21 @@ export default class FormPoint extends SmartView{
     this.setCloseFormButtonClickHandler(this._callback.closeFormButtonClickHandler);
     this._setStartDatepicker();
     this._setEndDatepicker();
+    this.setDeleteClickHandler(this._callback.deleteClick);
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._startDatepicker) {
+      this._startDatepicker.destroy();
+      this._startDatepicker = null;
+    }
+
+    if (this._endDatepicker) {
+      this._endDatepicker.destroy();
+      this._endDatepicker = null;
+    }
   }
 
   reset(data) {
@@ -223,15 +241,33 @@ export default class FormPoint extends SmartView{
     this.getElement().querySelector('.event__input--destination').addEventListener('change', this._destinationChangeHandler);
     this.getElement().querySelector('.event__input--price').addEventListener('input', this._priceInputHandler);
     this.getElement().querySelector('.event__type-group').addEventListener('change', this._offersSelectionHandler);
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteClickHandler);
+  }
+
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(FormPoint.parseStateToData(this._state));
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
   }
 
   _destinationChangeHandler(evt) {
     evt.preventDefault();
-    this.updateData({
-      name: evt.target.value,
-      info: getInfoDescription(),
-      photo: getPhotoOfDestination(),
-    });
+    document.querySelectorAll('#destination-list-1 option')
+      .forEach((city) => {
+        if (city.value !== evt.target.value) {
+          evt.target.setCustomValidity('Select a destination from the list');
+          evt.target.reportValidity();
+        } else {
+          this.updateData({
+            name: evt.target.value,
+            info: getInfoDescription(),
+            photo: getPhotoOfDestination(),
+          });
+        }
+      });
   }
 
   _typeChangeHandler(evt) {

@@ -32,5 +32,9 @@ const sortTime = (pointA, pointB) =>
 
 const getMarkupIsElemHave = (elem, markup) => elem ? markup : '';
 
-export {getMarkupIsElemHave, sortStartDateUp, sortTime, sortPrice, getDateFormat, getDateISO, getDateHoursMinutes, getDateMonthDay};
+const isDatesEqual = (dateA, dateB) =>
+  (dateA === null && dateB === null) ? true : dayjs(dateA).isSame(dateB, 'D');
+
+
+export {getMarkupIsElemHave, sortStartDateUp, sortTime, sortPrice, getDateFormat, getDateISO, getDateHoursMinutes, getDateMonthDay, isDatesEqual};
 

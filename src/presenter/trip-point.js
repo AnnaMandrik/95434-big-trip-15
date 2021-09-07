@@ -1,6 +1,8 @@
 import FormPointView from '../view/route-form-edit.js';
 import ListPointView from '../view/route-point-in-list.js';
 import {RenderPosition, render,replace, remove} from '../utils/render.js';
+import {UserAction, UpdateType} from '../utils/const.js';
+import {isDatesEqual} from '../utils/task.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -22,6 +24,7 @@ export default class TripPoint {
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._onEventEscKeyDown = this._onEventEscKeyDown.bind(this);
     this._handleEditFormClose = this._handleEditFormClose.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
   init(data) {
@@ -37,6 +40,7 @@ export default class TripPoint {
     this._pointComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointInListComponent.setEditFavoriteClickHandler(this._handleFavoriteClick);
     this._pointComponent.setCloseFormButtonClickHandler(this._handleEditFormClose);
+    this._pointComponent.setDeleteClickHandler( this._handleDeleteClick);
 
     if (prevPointComponent === null || prevPointInListComponent === null) {
       render(this._formPointContainer, this._pointInListComponent, RenderPosition.BEFOREEND);
@@ -91,8 +95,22 @@ export default class TripPoint {
     this._replaceCardToForm();
   }
 
-  _handleFormSubmit() {
+  _handleFormSubmit(update) {
+    const isMinorUpdate = !isDatesEqual(this._data.timeFrom, update.timeFrom) || !isDatesEqual(this._data.timeTo, update.timeTo);
+    this._changeData(
+      UserAction.UPDATE_POINT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      update,
+    );
     this._replaceFormToCard();
+  }
+
+  _handleDeleteClick(point = undefined) {
+    this._changeData(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
   }
 
   _handleEditFormClose() {
@@ -103,6 +121,8 @@ export default class TripPoint {
 
   _handleFavoriteClick() {
     this._changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
       Object.assign(
         {},
         this._data,
