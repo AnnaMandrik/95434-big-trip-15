@@ -14,20 +14,5 @@ const getRandomArray = (arr) => {
   return results;
 };
 
-const updateItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
 
-  if (index === -1) {
-    return items;
-  }
-
-  return [
-    ...items.slice(0, index),
-    update,
-    ...items.slice(index + 1),
-  ];
-};
-
-const getMarkupIsElemHave = (elem, markup) => elem ? markup : '';
-
-export {getRandomInteger, getRandomArray, updateItem, getMarkupIsElemHave};
+export {getRandomInteger, getRandomArray};

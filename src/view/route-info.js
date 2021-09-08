@@ -8,7 +8,7 @@ const createRouteInfoTemplate = (data) => {
 
   const getRouteInfo = () => {
     const tripStartDate = dayjs(data[0].timeFrom).format('MMM D');
-    const tripEndDate = dayjs(data[data.length - 1].timeFrom).format('MMM D');
+    const tripEndDate = dayjs(data[data.length - 1].timeTo).format('MMM D');
 
     return `${tripStartDate}&nbsp;&mdash;&nbsp;${tripEndDate}`;
   };

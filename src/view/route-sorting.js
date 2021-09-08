@@ -1,10 +1,10 @@
 import AbstractView from './abstract.js';
 import {SORT_TYPE} from '../utils/const.js';
 
-const createTripSortingTemplate = () => (
+const createTripSortingTemplate = (currentSortType) => (
   `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
             <div class="trip-sort__item  trip-sort__item--day">
-              <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort"  data-sort-type = "${SORT_TYPE.DEFAULT}" value="sort-day" checked>
+              <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" ${currentSortType === SORT_TYPE.DEFAULT ? 'checked' : ''} data-sort-type = "${SORT_TYPE.DEFAULT}" value="sort-day" checked>
               <label class="trip-sort__btn" for="sort-day">Day</label>
             </div>
 
@@ -14,12 +14,12 @@ const createTripSortingTemplate = () => (
             </div>
 
             <div class="trip-sort__item  trip-sort__item--time">
-              <input id="sort-time" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" data-sort-type = "${SORT_TYPE.TIME}" value="sort-time">
+              <input id="sort-time" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" ${currentSortType === SORT_TYPE.TIME ? 'checked' : ''} data-sort-type = "${SORT_TYPE.TIME}" value="sort-time">
               <label class="trip-sort__btn" for="sort-time" >Time</label>
             </div>
 
             <div class="trip-sort__item  trip-sort__item--price">
-              <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" data-sort-type = "${SORT_TYPE.PRICE}" value="sort-price">
+              <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" ${currentSortType === SORT_TYPE.PRICE ? 'checked' : ''} data-sort-type = "${SORT_TYPE.PRICE}" value="sort-price">
               <label class="trip-sort__btn" for="sort-price">Price</label>
             </div>
 
@@ -31,13 +31,14 @@ const createTripSortingTemplate = () => (
 );
 
 export default class TripSort extends AbstractView{
-  constructor() {
+  constructor(currentSortType) {
     super();
+    this._currentSortType = currentSortType;
     this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
   }
 
   getTemplate() {
-    return createTripSortingTemplate();
+    return createTripSortingTemplate(this._currentSortType);
   }
 
   _sortTypeChangeHandler(evt) {
