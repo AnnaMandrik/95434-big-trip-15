@@ -1,13 +1,9 @@
 import FormPointView from '../view/route-form-edit.js';
 import ListPointView from '../view/route-point-in-list.js';
 import {RenderPosition, render,replace, remove} from '../utils/render.js';
-import {UserAction, UpdateType} from '../utils/const.js';
+import {UserAction, UpdateType, Mode} from '../utils/const.js';
 import {isDatesEqual} from '../utils/task.js';
 
-const Mode = {
-  DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
-};
 
 export default class TripPoint {
   constructor(formPointContainer, changeData, changeMode) {
@@ -92,6 +88,7 @@ export default class TripPoint {
   }
 
   _handleEditClick() {
+    this._pointComponent._unlockButton();
     this._replaceCardToForm();
   }
 

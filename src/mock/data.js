@@ -161,4 +161,8 @@ const generateData = () => {
   };
 };
 
-export {TYPES, generateData, offerExampleStatic, POINTS_CITIES, getPhotoOfDestination, getInfoDescription};
+const POINT_COUNT = 15;
+
+const data = new Array(POINT_COUNT).fill().map(generateData);
+
+export {data, TYPES, generateData, offerExampleStatic, POINTS_CITIES, getPhotoOfDestination, getInfoDescription};

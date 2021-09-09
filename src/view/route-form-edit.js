@@ -1,17 +1,17 @@
 import {getDateFormat, getMarkupIsElemHave} from '../utils/task.js';
-import {SET_FLATPICKR} from '../utils/const.js';
+import {SET_FLATPICKR, Mode} from '../utils/const.js';
 import {offerExampleStatic, POINTS_CITIES, TYPES, getPhotoOfDestination, getInfoDescription} from '../mock/data.js';
 import SmartView from './smart.js';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
-import dayjs from 'dayjs';
+// import dayjs from 'dayjs';
 import he from 'he';
 
 const BLANK_DATA = {
   type: TYPES[0] ,
   name: [],
-  timeFrom: dayjs().toDate(),
-  timeTo: dayjs().toDate(),
+  timeFrom: new Date(),
+  timeTo:  new Date(),
   price: null,
   offers: '',
   info: '',
@@ -51,7 +51,7 @@ const createPictureMarkup = (photo) => photo
   : '';
 
 const createRouteFormEdit = (data) => {
-  const {type, name, timeFrom, timeTo, price, offers, info, photo, id} = data;
+  const {type, name, timeFrom, timeTo, price, offers, info, photo, id, isEditing} = data;
 
 
   return `<li class="trip-events__item">
@@ -94,7 +94,7 @@ const createRouteFormEdit = (data) => {
         <input class="event__input  event__input--price" id="event-price-1" required type="number" name="event-price" value=${price ? he. encode(price.toString()) : ''}>
       </div>
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">Delete</button>
+      <button class="event__reset-btn" type="reset">${isEditing ? 'Delete' : 'Cancel'}</button>
       <button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
       </button>
@@ -318,6 +318,11 @@ export default class FormPoint extends SmartView{
   _closeFormButtonClickHandler(evt) {
     evt.preventDefault();
     this._callback.closeFormButtonClickHandler();
+    this._unlockButton();
+  }
+
+  _unlockButton() {
+    document.querySelector('.trip-main__event-add-btn').disabled = false;
   }
 
   setCloseFormButtonClickHandler(callback) {
@@ -329,7 +334,9 @@ export default class FormPoint extends SmartView{
     return Object.assign(
       {},
       data,
-      {},
+      {
+        isEditing: Mode.EDITING,
+      },
     );
   }
 

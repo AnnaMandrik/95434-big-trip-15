@@ -16,6 +16,7 @@ export default class NewPoint {
   }
 
   init() {
+
     if (this._pointComponent !== null) {
       return;
     }
@@ -42,11 +43,13 @@ export default class NewPoint {
   _onEventEscKeyDown(evt) {
     if( evt.key === 'Escape' ||  evt.key === 'Esc') {
       evt.preventDefault();
+      this._pointComponent._unlockButton();
       this.destroy();
     }
   }
 
   _handleFormSubmit(point) {
+    this._pointComponent._unlockButton();
     this._changeData(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
@@ -56,6 +59,7 @@ export default class NewPoint {
   }
 
   _handleDeleteClick() {
+    this._pointComponent._unlockButton();
     this.destroy();
   }
 }
