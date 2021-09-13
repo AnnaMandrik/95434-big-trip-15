@@ -7,8 +7,7 @@ const SORT_TYPE = {
 const SET_FLATPICKR = {
   dateFormat: 'd/m/y H:i',
   enableTime: true,
-  // eslint-disable-next-line camelcase
-  time_24hr: true,
+  'time_24hr': true,
 };
 
 const UserAction = {
@@ -29,4 +28,14 @@ const FilterType = {
   PAST: 'past',
 };
 
-export {SORT_TYPE, SET_FLATPICKR, UserAction, UpdateType, FilterType};
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
+const MenuItem = {
+  TABLE: 'TABLE',
+  STATS: 'STATS',
+};
+
+export {SORT_TYPE, SET_FLATPICKR, UserAction, UpdateType, FilterType, Mode, MenuItem};

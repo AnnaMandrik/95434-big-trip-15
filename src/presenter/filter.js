@@ -49,6 +49,12 @@ export default class Filter {
   _getFilters() {
     const points = this._pointsModel.getPoints();
 
+    // return {
+    //   [FilterType.EVERYTHING]: points.length,
+    //   [FilterType.FUTURE]: points.filter(filter[FilterType.FUTURE]).length,
+    //   [FilterType.PAST]: points.filter(filter[FilterType.PAST]).length,
+    // };
+
     return [
       {
         type: FilterType.EVERYTHING,

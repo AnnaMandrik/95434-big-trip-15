@@ -26,8 +26,6 @@ export default class TripRoute {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
-    this._pointsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
 
     this._pointNewPresenter = new NewPointPresenter(this._tripRouteContainer, this._handleViewAction);
   }
@@ -36,7 +34,17 @@ export default class TripRoute {
   init() {
     render(this._tripRouteContainer, this._tripEventListComponent, RenderPosition.BEFOREEND);
 
+    this._pointsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
+
     this._renderContainer();
+  }
+
+  destroy() {
+    this._clearPointList({resetSortType: true});
+    remove(this._tripEventListComponent);
+    this._pointsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
   }
 
   createPoint() {
@@ -49,6 +57,8 @@ export default class TripRoute {
     const points = this._pointsModel.getPoints();
     this._filterType = this._filterModel.getFilter();
     const filteredPoints = filter[this._filterType](points);
+
+    // currentFilter === FilterType.EVERYTHING ? points : points.filter(filter[this._filterModel.getFilter()]);
 
     switch(this._currentSortType) {
       case SORT_TYPE.PRICE:
