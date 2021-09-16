@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
 import AbstractView from './abstract.js';
 
-
-const createRouteInfoTemplate = (data) => {
+const data = [];
+const createRouteInfoTemplate = () => {
   const MAX_PATH_DISPLAY_LENGTH = 3;
   let totalCost = 0;
 
@@ -14,20 +14,20 @@ const createRouteInfoTemplate = (data) => {
   };
 
   const routePath = data.reduce((path, point, index) => {
-    const {name, offers, price } = point;
+    const {destination, offers, price } = point;
     totalCost += price;
     if (offers) {
       offers.forEach(() => totalCost += price);  // считает сумму
     }
-    if (index === 0 || path[path.length - 1] !== name) {
-      path.push(name);                                       // собирает названия
+    if (index === 0 || path[path.length - 1] !== destination.name) {
+      path.push(destination.name);                                       // собирает названия
     }
     return path;
   }, []);
 
   const routePathString = () => {
     if (routePath.length > MAX_PATH_DISPLAY_LENGTH) {
-      return `${routePath[0]} ... ${routePath[routePath.length - 1]}`;
+      return `${routePath[0]} &mdash; ... &mdash; ${routePath[routePath.length - 1]}`;
     } else if (routePath.length <= MAX_PATH_DISPLAY_LENGTH) {
       return routePath.join(' &mdash; ');
     }
@@ -45,7 +45,7 @@ const createRouteInfoTemplate = (data) => {
 };
 
 export default class RouteInfo extends AbstractView{
-  constructor(data) {
+  constructor() {
     super();
     this._data = data;
   }

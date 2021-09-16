@@ -2,11 +2,39 @@ import dayjs from 'dayjs';
 
 // const SECONDS_IN_DAY = 86400000;
 // const SECONDS_IN_HOURS = 3600000;
+const MINUTES_IN_A_DAY = 60 * 24;
+const MINUTES_IN_A_HOUR = 60;
+const MILLISECONDS_IN_MINUTE = 60 * 100;
 
 const getDateFormat = ((date) => dayjs(date).format('DD/MM/YYHH:mm'));
 const getDateISO = ((date) => dayjs(date).format('YYYY-MM-DDTHH:mm'));
 const getDateHoursMinutes = ((date) => dayjs(date).format('HH:mm'));
 const getDateMonthDay = ((date) => dayjs(date).format('MMM DD'));
+
+const padNumberWithZeros = (number, padCount = 2) =>
+  Number(number).toString(10).padStart(padCount, '0');
+
+
+const getDiffDate = (diffInMinutes) => {
+  let formattedDiff = '';
+  const daysNumber = Math.floor(diffInMinutes / MINUTES_IN_A_DAY);
+  const hoursNumber = Math.floor(diffInMinutes / MINUTES_IN_A_HOUR);
+  let leftMinutes = 0;
+
+  if (daysNumber) {
+    const leftHours = Math.floor((diffInMinutes - daysNumber * MINUTES_IN_A_DAY) / MINUTES_IN_A_HOUR);
+    leftMinutes = diffInMinutes - daysNumber * MINUTES_IN_A_DAY - leftHours * MINUTES_IN_A_HOUR;
+    formattedDiff = `${padNumberWithZeros(daysNumber)}D ${padNumberWithZeros(leftHours)}H ${padNumberWithZeros(leftMinutes)}M`;
+  } else if (hoursNumber) {
+    leftMinutes = diffInMinutes - hoursNumber * MINUTES_IN_A_HOUR;
+    formattedDiff = `${padNumberWithZeros(hoursNumber)}H ${padNumberWithZeros(leftMinutes)}M`;
+  } else {
+    formattedDiff = `${padNumberWithZeros(diffInMinutes)}M`;
+  }
+
+  return formattedDiff;
+};
+
 
 // const getDiffDate = (dateTo, dateFrom) => {
 //   const diff = dayjs(dateTo).diff(dayjs(dateFrom));
@@ -30,11 +58,9 @@ const sortPrice = (pointA, pointB) => pointB.price - pointA.price;
 const sortTime = (pointA, pointB) =>
   dayjs(pointB.timeTo).diff(dayjs(pointB.timeFrom)) - dayjs(pointA.timeTo).diff(dayjs(pointA.timeFrom));
 
-const getMarkupIsElemHave = (elem, markup) => elem ? markup : '';
-
 const isDatesEqual = (dateA, dateB) =>
   (dateA === null && dateB === null) ? true : dayjs(dateA).isSame(dateB, 'D');
 
 
-export {getMarkupIsElemHave, sortStartDateUp, sortTime, sortPrice, getDateFormat, getDateISO, getDateHoursMinutes, getDateMonthDay, isDatesEqual};
+export {getDiffDate, sortStartDateUp, sortTime, sortPrice, getDateFormat, getDateISO, getDateHoursMinutes, getDateMonthDay, isDatesEqual, MILLISECONDS_IN_MINUTE};
 

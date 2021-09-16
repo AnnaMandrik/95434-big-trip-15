@@ -1,6 +1,7 @@
 import TripSortView from '../view/route-sorting.js';
 import EmptyListView from '../view/route-form-create.js';
 import TripEventsListView from '../view/points-list.js';
+import LoadingView from '../view/loading.js';
 import TripPointPresenter from '../presenter/trip-point.js';
 import NewPointPresenter from '../presenter/point-new.js';
 import {RenderPosition, render, remove} from '../utils/render.js';
@@ -10,7 +11,7 @@ import {filter} from '../utils/filter.js';
 
 
 export default class TripRoute {
-  constructor(tripRouteContainer, pointsModel, filterModel) {
+  constructor(tripRouteContainer, pointsModel, filterModel, destinationData, offersData, api) {
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
     this._tripRouteContainer = tripRouteContainer;
@@ -20,6 +21,11 @@ export default class TripRoute {
     this._currentSortType = SORT_TYPE.DEFAULT;
     this._tripSortComponent = null;
     this._noPointComponent = null;
+    this._loadingComponent = new LoadingView();
+    this._isLoading = true;
+    this._api = api;
+    this._destinationData = destinationData;
+    this._offersData = offersData;
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -58,24 +64,22 @@ export default class TripRoute {
     this._filterType = this._filterModel.getFilter();
     const filteredPoints = filter[this._filterType](points);
 
-    // currentFilter === FilterType.EVERYTHING ? points : points.filter(filter[this._filterModel.getFilter()]);
-
     switch(this._currentSortType) {
       case SORT_TYPE.PRICE:
         return filteredPoints.sort(sortPrice);
       case SORT_TYPE.TIME:
         return filteredPoints.sort(sortTime);
-      case SORT_TYPE.DEFAULT:
+      default:
         return filteredPoints.sort(sortStartDateUp);
     }
-
-    return filteredPoints;
   }
 
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this._pointsModel.updatePoint(updateType, update);
+        this._api.updatePoint(update).then((response) => {
+          this._pointsModel.updatePoint(updateType, response);
+        });
         break;
       case UserAction.ADD_POINT:
         this._pointsModel.addPoint(updateType, update);
@@ -97,6 +101,11 @@ export default class TripRoute {
         break;
       case UpdateType.MAJOR:
         this._clearPointList({resetSortType: true});
+        this._renderContainer();
+        break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
         this._renderContainer();
         break;
     }
@@ -135,7 +144,7 @@ export default class TripRoute {
   }
 
   _renderPoint(data) {
-    const pointPresenter = new TripPointPresenter(this._tripEventListComponent, this._handleViewAction, this._handleModeChange);
+    const pointPresenter = new TripPointPresenter(this._tripEventListComponent, this._handleViewAction, this._handleModeChange, this._destinationData, this._offersData);
     pointPresenter.init(data);
     this._tripPointPresenter[data.id] = pointPresenter;
   }
@@ -146,6 +155,10 @@ export default class TripRoute {
     });
   }
 
+  _renderLoading() {
+    render(this._tripRouteContainer, this._loadingComponent, RenderPosition.AFTERBEGIN);
+  }
+
   _clearPointList({resetSortType = false} = {}) {
     this._pointNewPresenter.destroy();
     Object
@@ -154,10 +167,8 @@ export default class TripRoute {
     this._tripPointPresenter = {};
 
     remove(this._tripSortComponent);
-
-    if (this._noPointComponent) {
-      remove(this._noPointComponent);
-    }
+    remove(this._loadingComponent);
+    remove(this._noPointComponent);
 
     if (resetSortType) {
       this._currentSortType = SORT_TYPE.DEFAULT;
@@ -166,6 +177,10 @@ export default class TripRoute {
 
 
   _renderContainer() {
+    if(this._isLoading) {
+      this._renderLoading();
+      return;
+    }
     const points = this._getPoints();
     if(!points.length) {
       this._renderEmptyList();

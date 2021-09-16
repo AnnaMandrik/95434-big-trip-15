@@ -1,57 +1,65 @@
-import {getDateFormat, getMarkupIsElemHave} from '../utils/task.js';
+import {getDateFormat} from '../utils/task.js';
 import {SET_FLATPICKR, Mode} from '../utils/const.js';
-import {offerExampleStatic, POINTS_CITIES, TYPES, getPhotoOfDestination, getInfoDescription} from '../mock/data.js';
+// import {offerExampleStatic, POINTS_CITIES, TYPES, getPhotoOfDestination, getInfoDescription} from '../mock/data.js';
 import SmartView from './smart.js';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
+import {offersData, destinationData} from '../main.js';
 // import dayjs from 'dayjs';
 import he from 'he';
 
+const TYPES = [];
 const BLANK_DATA = {
-  type: TYPES[0] ,
-  name: [],
+  type: TYPES,
+  destination: [],
   timeFrom: new Date(),
   timeTo:  new Date(),
   price: null,
-  offers: '',
-  info: '',
-  photo: '',
+  offers: [],
   id: null,
 };
 
-// const createNameDataList = (city) => city.map((name) =>
-//   `<option value="${name}"></option>`).join('');
+const createNameDataList = (city) => city.map((name) =>
+  `<option value="${name}"></option>`);
 
-const createNameDataList = () => `<datalist id="destination-list-1">
-${POINTS_CITIES.reduce((template, name) => `${template  }<option value="${name}"></option>`, '')}
-</datalist>`;
-
-const createTripTypeItem = (type, isChecked = false) => `<div class="event__type-item">
+// const createNameDataList = () => `<datalist id="destination-list-1">
+// ${destination.name.reduce((template, name) => `${template  }<option value="${name}"></option>`, '')}
+// </datalist>`;
+let isChecked = false;
+const createTripTypeItem = (type) => `<div class="event__type-item">
   <input id="event-type-${type.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type.toLowerCase()}" ${isChecked ? 'checked' : ''}>
   <label class="event__type-label  event__type-label--${type.toLowerCase()}" for="event-type-${type.toLowerCase()}-1">${type}</label>
 </div>`;
 
-const createOfferMarkup = (offer) => offer
-  ? offer.map((item) => `<div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="${item.type}-${item.id}" " type="checkbox" name="event-offer-${item.type}"}>
-    <label class="event__offer-label" for="${item.type}-${item.id}">
-      <span class="event__offer-title">${item.offers.title}</span>
-      &plus;&euro;&nbsp;
-      <span class="even__offer-price">${item.offers.price}</span>
-    </label>
-  </div>`)
-  : '';
-
 const generateTripTypeListTemplate = (type) =>
   TYPES.reduce((template, tripType) => template + createTripTypeItem(tripType, tripType === type), '');
 
+isChecked = (item, offer) => offer.some((i) => i.title === item.title);
 
-const createPictureMarkup = (photo) => photo
-  ? photo.map((item) => `<img class="event__photo" src="${item.src}" alt="${item.description}">`).join(' ')
+const createOfferMarkup = (type, offerChecked) =>
+  offersData.filter((i) =>
+    i.type === type)[0]
+    .offers.map((item) => `<div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden" id="${item.price}" type="checkbox" name="event-offer-${item.type}" ${isChecked(item, offerChecked) ? 'checked' : ''}>
+      <label class="event__offer-label" for="${item.price}">
+        <span class="event__offer-title">${item.title}</span>
+        &plus;&euro;&nbsp;
+        <span class="even__offer-price">${item.price}</span>
+      </label>
+    </div>`);
+
+
+const offersArrLength = (type) =>
+  offersData.filter((i) => i.type === type)[0].offers.length;
+
+const createPictureMarkup = (element) => element
+  ? element.map((item) => `<img class="event__photo" src="${item.src}" alt="${item.description}">`).join(' ')
   : '';
 
 const createRouteFormEdit = (data) => {
-  const {type, name, timeFrom, timeTo, price, offers, info, photo, id, isEditing} = data;
+  const destinationName = destinationData.getDestinations().map((i) => i.name);
+
+  const {type, destination, timeFrom, timeTo, price, offers, id, isEditing} = data;
 
 
   return `<li class="trip-events__item">
@@ -60,13 +68,13 @@ const createRouteFormEdit = (data) => {
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" for="event-type-toggle-${id}">
           <span class="visually-hidden">Choose event type</span>
-          <img class="event__type-icon" width="17" height="17" src="img/icons/${type.toLowerCase()}.png" alt="Event ${type} icon">
+          <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event ${type} icon">
         </label>
         <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${id}" type="checkbox">
         <div class="event__type-list">
           <fieldset class="event__type-group">
             <legend class="visually-hidden">Event type</legend>
-           ${generateTripTypeListTemplate(id, TYPES)}
+           ${generateTripTypeListTemplate()}
           </fieldset>
         </div>
       </div>
@@ -74,10 +82,10 @@ const createRouteFormEdit = (data) => {
         <label class="event__label  event__type-output" for="event-destination-1">
           ${type}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" required type="text" name="event-destination" value="${name ? he.encode(name.toString()) : ''}" list="destination-list-1">
-
-            ${createNameDataList(name)}
-
+        <input class="event__input  event__input--destination" id="event-destination-1" required type="text" name="event-destination" value="${destination ? he.encode(destination.name.toString()) : ''}" list="destination-list-1">
+        <datalist id="destination-list-1">
+            ${createNameDataList(destinationName)}
+            </datalist>
       </div>
       <div class="event__field-group  event__field-group--time">
         <label class="visually-hidden" for="event-start-time-1">From</label>
@@ -101,20 +109,22 @@ const createRouteFormEdit = (data) => {
     </header>
     <section class="event__details">
      <section class="event__section  event__section--offers">
-        ${(offers ? offers.length : '') ? '<h3 class="event__section-title  event__section-title--offers">Offers</h3>' : ''}
+        ${ offersArrLength(offersData.getOffers(), type) ? '<h3 class="event__section-title  event__section-title--offers">Offers</h3>' : ''}
           <div class="event__available-offers">
-      ${offers ? createOfferMarkup(offers).join('') : ''}
+      ${createOfferMarkup(offersData.getOffers(), type, offers).join('')}
       </div>
       </section>
-      <section class="event__section  event__section--destination">
-      ${getMarkupIsElemHave(info, '<h3 class="event__section-title  event__section-title--destination">Destination</h3>')}
-      <p class="event__destination-description">${getMarkupIsElemHave(info, info)}</p>
+
+      ${destination ? `<section class="event__section  event__section--destination">
+       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      <p class="event__destination-description">${destination ? destination.description : ''}</p>
       <div class="event__photos-container">
         <div class="event__photos-tape">
-        ${createPictureMarkup(photo)}
+        ${destination.pictures ? createPictureMarkup(destination.pictures) : ''}
         </div>
       </div>
-    </section>
+    </section>` : ''}
+
     </section>
   </form>
 </li>`;
@@ -124,7 +134,8 @@ export default class FormPoint extends SmartView{
   constructor(data = BLANK_DATA) {
     super();
     this._state = FormPoint.parseDataToState(data);
-    this._offers = offerExampleStatic;
+    this._offers = offersData.getOffers();
+    this._destination = destinationData.getDestinations();
     this._startDatepicker = null;
     this._endDatepicker = null;
     this._setDate = null;
@@ -223,7 +234,7 @@ export default class FormPoint extends SmartView{
     this._endDatepicker.set('minDate', userDate);
     this._endDatepicker.set('minTime', userDate);
 
-    if(this._setDate <= userDate) {
+    if (this._setDate <= userDate) {
       this._endDatepicker.setDate(userDate);
       this._setDate = userDate;
       this._state.timeTo = this._setDate;
@@ -255,6 +266,8 @@ export default class FormPoint extends SmartView{
 
   _destinationChangeHandler(evt) {
     evt.preventDefault();
+    const destinationFilter = this._destination.filter((i) =>
+      i.name = evt.target.value);
     document.querySelectorAll('#destination-list-1 option')
       .forEach((city) => {
         if (city.value !== evt.target.value) {
@@ -262,9 +275,11 @@ export default class FormPoint extends SmartView{
           evt.target.reportValidity();
         } else {
           this.updateData({
-            name: evt.target.value,
-            info: getInfoDescription(),
-            photo: getPhotoOfDestination(),
+            destination: {
+              name: evt.target.value,
+              description: destinationFilter.map((i) => i.description)[0],
+              pictures: destinationFilter.map((i) => i.pictures)[0],
+            },
           });
         }
       });
@@ -295,13 +310,8 @@ export default class FormPoint extends SmartView{
   _offersSelectionHandler(evt) {
     evt.preventDefault();
 
-    const offerCopy = this._offers;
-
-    const getFilterOffersForType = () =>  offerCopy.filter((elem) =>
-      this._state.type === elem.type.toLowerCase());
-
     this.updateData({
-      offers: getFilterOffersForType(),
+      offers: this._offers,
     });
   }
 

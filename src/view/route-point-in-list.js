@@ -1,46 +1,17 @@
 import dayjs from 'dayjs';
-import {getDateISO, getDateHoursMinutes, getDateMonthDay} from '../utils/task.js';
+import {getDateISO, getDateHoursMinutes, getDateMonthDay, getDiffDate} from '../utils/task.js';
 import AbstractView from './abstract.js';
 
-const MINUTES_IN_A_DAY = 1440;
-const MINUTES_IN_A_HOUR = 60;
 
 const createRoutePointInList = (data) => {
-  const {type, name, price, offers, isFavorite, timeFrom, timeTo} = data;
-  // let {timeFrom, timeTo} = data;
+  const {type, destination = 'taxi', price, offers = [], isFavorite, timeFrom, timeTo} = data;
 
-  const padNumberWithZeros = (number, padCount = 2) =>
-    Number(number).toString(10).padStart(padCount, '0');
-
-
-  const formatTripEventDuration = (durationInMinutes) => {
-    let formattedDuration = '';
-    const daysNumber = Math.floor(durationInMinutes / MINUTES_IN_A_DAY);
-    const hoursNumber = Math.floor(durationInMinutes / MINUTES_IN_A_HOUR);
-    let leftMinutes;
-
-    if (daysNumber) {
-      const leftHours = Math.floor((durationInMinutes - daysNumber * MINUTES_IN_A_DAY) / MINUTES_IN_A_HOUR);
-      leftMinutes = durationInMinutes - daysNumber * MINUTES_IN_A_DAY - leftHours * MINUTES_IN_A_HOUR;
-      formattedDuration = `${padNumberWithZeros(daysNumber)}D ${padNumberWithZeros(leftHours)}H ${padNumberWithZeros(leftMinutes)}M`;
-    } else if (hoursNumber) {
-      leftMinutes = durationInMinutes - hoursNumber * MINUTES_IN_A_HOUR;
-      formattedDuration = `${padNumberWithZeros(hoursNumber)}H ${padNumberWithZeros(leftMinutes)}M`;
-    } else {
-      formattedDuration = `${padNumberWithZeros(leftMinutes)}M`;
-    }
-
-    return formattedDuration;
-  };
-
-  // timeFrom = dayjs(timeFrom);
-  // timeTo = dayjs(timeTo);
-  const tripEventDuration = formatTripEventDuration(dayjs(timeTo).diff(dayjs(timeFrom), 'minute'));
+  const tripEventDuration = getDiffDate(dayjs(timeTo).diff(dayjs(timeFrom), 'minute'));
 
   const createOfferElement =  () => offers.map((item) => `<li class="event__offer">
-      <span class="event__offer-title">${item.offers.title}</span>
+      <span class="event__offer-title">${item.title}</span>
       &plus;&euro;&nbsp;
-      <span class="event__offer-price">${item.offers.price}</span>
+      <span class="event__offer-price">${item.price}</span>
     </li>`);
 
 
@@ -48,9 +19,9 @@ const createRoutePointInList = (data) => {
     <div class="event">
       <time class="event__date" datetime="${getDateISO(timeFrom)}">${getDateMonthDay(timeFrom)}</time>
       <div class="event__type">
-        <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
+        <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${type} ${name}</h3>
+      <h3 class="event__title">${type} ${destination.name}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime=${getDateISO(timeFrom)}>${getDateHoursMinutes(timeFrom)}</time>
@@ -64,7 +35,7 @@ const createRoutePointInList = (data) => {
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-        ${createOfferElement(data.offers).join('')}
+        ${offers ? createOfferElement(offers).join('') : ''}
       </ul>
       <button class="event__favorite-btn ${isFavorite ? 'event__favorite-btn--active' : ''}" type="button">
         <span class="visually-hidden">Add to favorite</span>
