@@ -4,7 +4,7 @@ import AbstractView from './abstract.js';
 
 
 const createRoutePointInList = (data) => {
-  const {type, destination = 'taxi', price, offers = [], isFavorite, timeFrom, timeTo} = data;
+  const {type, offers, destination,price, isFavorite, timeFrom, timeTo} = data;
 
   const tripEventDuration = getDiffDate(dayjs(timeTo).diff(dayjs(timeFrom), 'minute'));
 

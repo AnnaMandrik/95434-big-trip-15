@@ -2,7 +2,7 @@ import AbstractView from './abstract.js';
 // import Chart from 'chart.js';
 // import ChartDataLabels from 'chartjs-plugin-datalabels';
 // import {getTimeFormat, getSumPriceFromType, getSumTimeFromType, getQuantityType, getSortType} from '../utils/statistics.js';
-// import {data} from '../mock/data.js';
+
 import {getChartData, renderChart} from '../utils/statistics.js';
 import {MILLISECONDS_IN_MINUTE, getDiffDate} from '../utils/task.js';
 

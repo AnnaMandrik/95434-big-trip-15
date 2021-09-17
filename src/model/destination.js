@@ -1,13 +1,13 @@
-import AbstractObserver from './utils/abstract-observer';
+import AbstractObserver from '../utils/abstract-observer';
 
 export default class Destination extends AbstractObserver{
   constructor() {
     super();
-    this._destinations = [];
+    this._destinations = null;
   }
 
   setDestinations(destinations) {
-    this._destinations = destinations.slice();
+    this._destinations = destinations;
   }
 
   getDestinations() {

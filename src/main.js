@@ -3,11 +3,10 @@ import RouteInfoView from './view/route-info.js';
 import StatsView from './view/stats.js';
 import TripRoutePresenter from './presenter/trip-route.js';
 import FilterPresenter from './presenter/filter.js';
-// import {data} from './mock/data.js';
 import PointsModel from './model/points.js';
 import FilterModel from './model/filter.js';
-import Destination from './data-destination.js';
-import Offers from './data-offers.js';
+import DestinationModel from './model/destination.js';
+import OffersModel from './model/offers.js';
 import {RenderPosition, render, remove} from './utils/render.js';
 // import {sortStartDateUp} from './utils/task.js';
 import {MenuItem, UpdateType, FilterType} from './utils/const.js';
@@ -25,10 +24,10 @@ const tripEventsElement = document.querySelector('.trip-events');
 const api = new Api(END_POINT, AUTHORIZATION);
 const pointsModel = new PointsModel();
 const filterModel = new FilterModel();
-const destinationData = new Destination();
-const offersData = new Offers();
+const destinationModel = new DestinationModel();
+const offersModel = new OffersModel();
 const siteMenuComponent = new SiteMenuView();
-const tripRoutePresenter = new TripRoutePresenter(tripEventsElement, pointsModel, filterModel, destinationData, offersData, api);
+const tripRoutePresenter = new TripRoutePresenter(tripEventsElement, pointsModel, filterModel, destinationModel, offersModel, api);
 const filterPresenter = new FilterPresenter(tripControlsFiltersElement, filterModel, pointsModel);
 
 // const tripPointsSortedByStart = data.sort(sortStartDateUp);
@@ -39,13 +38,18 @@ buttonNewEvent.addEventListener('click', (evt) => {
   buttonNewEvent.disabled = true;
 });
 
+const activateCreateTripPointButton = (updateType) => {
+  if (updateType === UpdateType.INIT) {
+    buttonNewEvent.disabled = false;
+  }
+};
+
 let statsComponent = null;
 
 const handleSiteMenuClick = (menuItem) => {
   const inputFilters = tripControlsFiltersElement.querySelectorAll('.trip-filters__filter-input');
   switch (menuItem) {
     case MenuItem.TABLE:
-
       tripRoutePresenter.destroy();
       tripRoutePresenter.init();
       filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
@@ -54,7 +58,6 @@ const handleSiteMenuClick = (menuItem) => {
       break;
 
     case MenuItem.STATS:
-
       tripRoutePresenter.destroy();
       statsComponent = new StatsView(pointsModel.getPoints());
       render(tripEventsElement, statsComponent, RenderPosition.BEFOREEND);
@@ -67,29 +70,27 @@ const handleSiteMenuClick = (menuItem) => {
   }
 };
 render(tripMainElement, new RouteInfoView(), RenderPosition.AFTERBEGIN);
-// render(tripControlsNavElement, siteMenuComponent, RenderPosition.BEFOREEND);
-// siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+//render(tripControlsNavElement, siteMenuComponent, RenderPosition.BEFOREEND);
 
+pointsModel.addObserver(activateCreateTripPointButton);
 tripRoutePresenter.init();
 filterPresenter.init();
 buttonNewEvent.disabled = true;
 
-api.getPoints().then((data) => {
+Promise.all([api.getPoints(), api.getDestinations(), api.getOffers()])
+  .then((data) => {
+    const [points, offers, destinations] = data;
+    destinationModel.setDestinations(destinations);
+    offersModel.setOffers(offers);
+    pointsModel.setPoints(UpdateType.INIT, points);
+    render(tripControlsNavElement, siteMenuComponent, RenderPosition.BEFOREEND);
+    siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+  })
+  .catch(() => {
+    destinationModel.setDestinations([]);
+    offersModel.setOffers([]);
+    pointsModel.setPoints(UpdateType.INIT, []);
+  });
 
-  const [points, offers, destinations] = data;
-  offersData.setOffers(offers);
-  destinationData.setDestinations(destinations);
-  pointsModel.setPoints(UpdateType.INIT, points);
 
-  render(tripControlsNavElement, siteMenuComponent, RenderPosition.BEFOREEND);
-  siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
-  buttonNewEvent.disabled = false;
-
-}).catch(() => {
-  pointsModel.setPoints(UpdateType.INIT, []);
-  render(tripControlsNavElement, siteMenuComponent, RenderPosition.BEFOREEND);
-  siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
-  buttonNewEvent.disabled = false;
-});
-
-export {offersData, destinationData};
+export {offersModel};

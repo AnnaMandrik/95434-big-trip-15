@@ -8,7 +8,6 @@ export default class Points extends AbstractObserver {
 
   setPoints(updatePoint, data) {
     this._data = data.slice();
-
     this._notify(updatePoint);
   }
 
@@ -57,21 +56,22 @@ export default class Points extends AbstractObserver {
   }
 
   static adaptToClient(point) {
-    const adaptedPoint = Object.assign(
+    const adaptedPoint= Object.assign(
       {},
       point,
       {
-        timeFrom: point['date_from'],
-        timeTo: point['date_to'],
-        price: point['base_price'],
-        isFavorite: point['is_favorite'],
+        timeFrom: point.date_from !== null ? new Date(point.date_from) : point.date_from,
+        timeTo: point.date_to !== null ? new Date(point.date_to) : point.date_to,
+        price: point.base_price,
+        isFavorite: point.is_favorite,
+        id: point.id,
       },
     );
 
-    delete adaptedPoint['date_from'];
-    delete adaptedPoint['date_to'];
-    delete adaptedPoint['is_favorite'];
-    delete adaptedPoint['base_price'];
+    delete adaptedPoint.date_from;
+    delete adaptedPoint.date_to;
+    delete adaptedPoint.is_favorite;
+    delete adaptedPoint.base_price;
 
     return adaptedPoint;
   }
@@ -81,10 +81,13 @@ export default class Points extends AbstractObserver {
       {},
       point,
       {
-        'date_from': point.timeFrom,
-        'date_to': point.timeTo,
+        'date_from': point.timeFrom instanceof Date ? point.timeFrom.toISOString() : new Date,
+        'date_to': point.timeTo instanceof Date ? point.timeTo.toISOString() : new Date,
+        'is_favorite': point.isFavorite ? point.isFavorite : false,
         'base_price': point.price,
-        'is_favorite': point.isFavorite,
+        'id': point.id,
+        'type': point.type ? point.type : 'transport',
+        'offers': point.offers === null ? [] :point.offers.slice(),
       },
     );
 

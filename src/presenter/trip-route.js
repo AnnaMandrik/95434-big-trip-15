@@ -11,7 +11,7 @@ import {filter} from '../utils/filter.js';
 
 
 export default class TripRoute {
-  constructor(tripRouteContainer, pointsModel, filterModel, destinationData, offersData, api) {
+  constructor(tripRouteContainer, pointsModel, filterModel, destinationModel, offersModel,api) {
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
     this._tripRouteContainer = tripRouteContainer;
@@ -24,8 +24,8 @@ export default class TripRoute {
     this._loadingComponent = new LoadingView();
     this._isLoading = true;
     this._api = api;
-    this._destinationData = destinationData;
-    this._offersData = offersData;
+    this._destinationModel = destinationModel;
+    this._offersModel = offersModel;
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -74,18 +74,18 @@ export default class TripRoute {
     }
   }
 
-  _handleViewAction(actionType, updateType, update) {
+  _handleViewAction(actionType, updatePoint, update) {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         this._api.updatePoint(update).then((response) => {
-          this._pointsModel.updatePoint(updateType, response);
+          this._pointsModel.updatePoint(updatePoint, response);
         });
         break;
       case UserAction.ADD_POINT:
-        this._pointsModel.addPoint(updateType, update);
+        this._pointsModel.addPoint(updatePoint, update);
         break;
       case UserAction.DELETE_POINT:
-        this._pointsModel.deletePoint(updateType, update);
+        this._pointsModel.deletePoint(updatePoint, update);
         break;
     }
   }
@@ -144,7 +144,7 @@ export default class TripRoute {
   }
 
   _renderPoint(data) {
-    const pointPresenter = new TripPointPresenter(this._tripEventListComponent, this._handleViewAction, this._handleModeChange, this._destinationData, this._offersData);
+    const pointPresenter = new TripPointPresenter(this._tripEventListComponent, this._handleViewAction, this._handleModeChange,  this._destinationModel, this._offersModel);
     pointPresenter.init(data);
     this._tripPointPresenter[data.id] = pointPresenter;
   }

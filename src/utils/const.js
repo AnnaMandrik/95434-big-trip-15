@@ -39,4 +39,17 @@ const MenuItem = {
   STATS: 'STATS',
 };
 
-export {SORT_TYPE, SET_FLATPICKR, UserAction, UpdateType, FilterType, Mode, MenuItem};
+const TRIP_TYPES = [
+  'taxi',
+  'bus',
+  'train',
+  'ship',
+  'transport',
+  'drive',
+  'flight',
+  'check-in',
+  'sightseeing',
+  'restaurant',
+];
+
+export {TRIP_TYPES, SORT_TYPE, SET_FLATPICKR, UserAction, UpdateType, FilterType, Mode, MenuItem};
