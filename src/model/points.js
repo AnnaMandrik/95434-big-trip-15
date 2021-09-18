@@ -7,6 +7,7 @@ export default class Points extends AbstractObserver {
   }
 
   setPoints(updateType, data) {
+    console.log(data);
     this._data = [...data];
     this._notify(updateType);
   }
@@ -59,6 +60,7 @@ export default class Points extends AbstractObserver {
     const adaptedPoint= {
       ...point,
       ...{
+        type: point.type,
         timeFrom: point.date_from !== null ? new Date(point.date_from) : point.date_from,
         timeTo: point.date_to !== null ? new Date(point.date_to) : point.date_to,
         price: point.base_price,
@@ -67,6 +69,7 @@ export default class Points extends AbstractObserver {
       },
     };
 
+    // delete adaptedPoint.type;
     delete adaptedPoint.date_from;
     delete adaptedPoint.date_to;
     delete adaptedPoint.is_favorite;

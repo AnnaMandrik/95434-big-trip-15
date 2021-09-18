@@ -30,9 +30,10 @@ export default class TripPoint {
 
     const prevPointComponent =  this._pointComponent;
     const prevPointInListComponent = this._pointInListComponent;
+console.log(this._offersModel);
 
-    const offers = this._offersModel.getOffers();
     const destinations = this._destinationsModel.getDestinations();
+    const offers = this._offersModel.getOffers();
 
     this._pointComponent = new FormPointView(data);
     this._pointInListComponent = new ListPointView(offers, destinations, data, true);

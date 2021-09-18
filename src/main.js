@@ -13,7 +13,7 @@ import {MenuItem, UpdateType, FilterType} from './utils/const.js';
 import Api from './api.js';
 
 const AUTHORIZATION = 'Basic nuihljlojnu9876b';
-const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
+const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
 
 const tripMainElement = document.querySelector('.trip-main');
 const tripControlsNavElement = tripMainElement.querySelector('.trip-controls__navigation');
@@ -81,21 +81,54 @@ tripRoutePresenter.init();
 buttonNewEvent.disabled = true;
 
 
-api.getData()
-  .then(([points, offers, destinations]) => {
-    offersModel.setOffers(offers);
-    destinationsModel.setDestinations(destinations);
-    pointsModel.setPoints(UpdateType.INIT, points);
-  })
-  .then(() => {
-    filterPresenter.init();
-    render(tripControlsNavElement, siteMenuComponent, RenderPosition.BEFOREEND);
-    siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
-  })
-  .catch(() => {
-    pointsModel.setPoints(UpdateType.INIT, []);
-    filterPresenter.init();
-    render(tripControlsNavElement, siteMenuComponent, RenderPosition.BEFOREEND);
-    siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
-  });
+// api.getData()
+//   .then(([points, offers, destinations]) => {
+//     console.log(points);
+//     offersModel.setOffers(offers);
+//     destinationsModel.setDestinations(destinations);
+//     console.log();
+//     pointsModel.setPoints(UpdateType.INIT, points);
+//     console.log(points);
+//   })
+//   .then(() => {
+//     filterPresenter.init();
+//     render(tripControlsNavElement, siteMenuComponent, RenderPosition.BEFOREEND);
+//     siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+//   })
+//   .catch(() => {
+//     pointsModel.setPoints(UpdateType.INIT, []);
+//     filterPresenter.init();
+//     render(tripControlsNavElement, siteMenuComponent, RenderPosition.BEFOREEND);
+//     siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+//   });
+
+api.getOffers()
+.then((offers) => {
+  offersModel.setOffers(offers);
+
+  api.getDestinations()
+.then((destinations) => {
+  destinationsModel.setDestinations(destinations);
+});
+
+
+api.getPoints()
+.then((points) => {
+  pointsModel.setPoints(UpdateType.INIT, points);
+});
+
+});
+
+// api.getDestinations()
+// .then((destinations) => {
+//   destinationsModel.setDestinations(destinations);
+// });
+
+
+// api.getPoints()
+// .then((points) => {
+//   pointsModel.setPoints(UpdateType.INIT, points);
+// });
+
+
 

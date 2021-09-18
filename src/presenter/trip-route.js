@@ -11,7 +11,7 @@ import {filter} from '../utils/filter.js';
 
 
 export default class TripRoute {
-  constructor(tripRouteContainer, pointsModel, filterModel, destinationsModel, offersModel,api) {
+  constructor(tripRouteContainer, pointsModel, filterModel, offersModel,destinationsModel, api) {
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
     this._tripRouteContainer = tripRouteContainer;
@@ -24,8 +24,8 @@ export default class TripRoute {
     this._loadingComponent = new LoadingView();
     this._isLoading = true;
     this._api = api;
-    this._destinationsModel = destinationsModel;
     this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);

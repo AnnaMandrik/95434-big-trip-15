@@ -1,4 +1,9 @@
+
 const getOffersByType = (type, offers) => {
+  if (!offers) {
+    return [];
+  }
+
   const currentOffers = offers.find((offer) => offer.type === type);
   return currentOffers.offers.length ? currentOffers.offers : [];
 };

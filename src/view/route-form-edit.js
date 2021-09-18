@@ -83,8 +83,8 @@ const createPictureMarkupTemplate = ({pictures}) => (
 );
 
 
-const createRouteFormEdit = (OFFERS, DESTINATIONS, data, isEditing) => {
-
+const createRouteFormEdit = (OFFERS, DESTINATIONS, data = {}, isEditing) => {
+console.log(data);
   const {type, offers, destination, timeFrom, timeTo, price, isOffers, isDescription, isPictures, isDisabled, isSaving, isDeleting} = data;
 
 
@@ -94,7 +94,7 @@ const createRouteFormEdit = (OFFERS, DESTINATIONS, data, isEditing) => {
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" for="event-type-toggle-1">
           <span class="visually-hidden">Choose event type</span>
-          <img class="event__type-icon" width="17" height="17" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
+          <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
         </label>
         <input
             class="event__type-toggle
