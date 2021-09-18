@@ -3,7 +3,7 @@ import AbstractObserver from '../utils/abstract-observer';
 export default class Destination extends AbstractObserver{
   constructor() {
     super();
-    this._destinations = null;
+    this._destinations = [];
   }
 
   setDestinations(destinations) {

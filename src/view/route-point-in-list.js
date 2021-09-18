@@ -1,10 +1,13 @@
 import dayjs from 'dayjs';
 import {getDateISO, getDateHoursMinutes, getDateMonthDay, getDiffDate} from '../utils/task.js';
 import AbstractView from './abstract.js';
+import {TRIP_TYPES} from '../utils/const.js';
 
 
 const createRoutePointInList = (data) => {
-  const {type, offers, destination,price, isFavorite, timeFrom, timeTo} = data;
+  const {type, offers, destination, price, isFavorite, timeFrom, timeTo} = data;
+
+  const checkType = Object.values(TRIP_TYPES).filter((item) => item.toLowerCase() === type).join();
 
   const tripEventDuration = getDiffDate(dayjs(timeTo).diff(dayjs(timeFrom), 'minute'));
 
@@ -19,9 +22,9 @@ const createRoutePointInList = (data) => {
     <div class="event">
       <time class="event__date" datetime="${getDateISO(timeFrom)}">${getDateMonthDay(timeFrom)}</time>
       <div class="event__type">
-        <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
+        <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${type} ${destination.name}</h3>
+      <h3 class="event__title">${checkType} ${destination.name}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime=${getDateISO(timeFrom)}>${getDateHoursMinutes(timeFrom)}</time>

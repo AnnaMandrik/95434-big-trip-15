@@ -1,15 +1,11 @@
 import PointsModel from './model/points.js';
 
+
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
   POST: 'POST',
   DELETE: 'DELETE',
-};
-
-const SuccessHTTPStatusRange = {
-  MIN: 200,
-  MAX: 299,
 };
 
 export default class Api {
@@ -25,16 +21,31 @@ export default class Api {
   }
 
   getDestinations() {
-    return this._load({url: 'destinations'})
+    return this._load({
+      url: 'destinations',
+      method: Method.GET,
+    })
       .then(Api.toJSON)
-      .then((destinations) => destinations);
+      .then((destinations) => [...destinations]);
   }
 
   getOffers() {
-    return this._load({url: 'offers'})
+    return this._load({
+      url: 'offers',
+      method: Method.GET,
+    })
       .then(Api.toJSON)
-      .then((offers) => offers);
+      .then((offers) => [...offers]);
   }
+
+  getData() {
+    return Promise.all([
+      this.getOffers(),
+      this.getDestinations(),
+      this.getPoints(),
+    ]).catch(Api.catchError);
+  }
+
 
   updatePoint(point) {
     return this._load({
@@ -82,10 +93,7 @@ export default class Api {
   }
 
   static checkStatus(response) {
-    if (
-      response.status < SuccessHTTPStatusRange.MIN ||
-      response.status > SuccessHTTPStatusRange.MAX
-    ) {
+    if (!response.ok) {
       throw new Error(`${response.status}: ${response.statusText}`);
     }
 

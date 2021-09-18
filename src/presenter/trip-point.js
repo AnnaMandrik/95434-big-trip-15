@@ -1,15 +1,17 @@
 import FormPointView from '../view/route-form-edit.js';
 import ListPointView from '../view/route-point-in-list.js';
 import {RenderPosition, render,replace, remove} from '../utils/render.js';
-import {UserAction, UpdateType, Mode} from '../utils/const.js';
+import {UserAction, UpdateType, Mode, State} from '../utils/const.js';
 import {isDatesEqual} from '../utils/task.js';
 
 
 export default class TripPoint {
-  constructor(formPointContainer, changeData, changeMode) {
+  constructor(formPointContainer, changeData, changeMode, offersModel, destinationsModel) {
     this._formPointContainer = formPointContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
+    this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
 
     this._pointComponent = null;
     this._pointInListComponent = null;
@@ -29,8 +31,11 @@ export default class TripPoint {
     const prevPointComponent =  this._pointComponent;
     const prevPointInListComponent = this._pointInListComponent;
 
+    const offers = this._offersModel.getOffers();
+    const destinations = this._destinationsModel.getDestinations();
+
     this._pointComponent = new FormPointView(data);
-    this._pointInListComponent = new ListPointView(data);
+    this._pointInListComponent = new ListPointView(offers, destinations, data, true);
 
     this._pointInListComponent.setEditClickHandler(this._handleEditClick);
     this._pointComponent.setFormSubmitHandler(this._handleFormSubmit);
@@ -48,7 +53,8 @@ export default class TripPoint {
     }
 
     if (this._mode === Mode.EDITING) {
-      replace(this._pointComponent, prevPointComponent);
+      replace(this._pointInListComponent, prevPointComponent);
+      this._mode = Mode.DEFAULT;
     }
 
     remove(prevPointInListComponent);
@@ -63,6 +69,39 @@ export default class TripPoint {
   resetView() {
     if(this._mode !== Mode.DEFAULT) {
       this._replaceFormToCard();
+    }
+  }
+
+  setViewState(state) {
+    if (this._mode === Mode.DEFAULT) {
+      return;
+    }
+
+    const resetFormState = () => {
+      this._pointComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._pointComponent.updateData({
+          isDisabled: true,
+          isSaving: true,
+        });
+        break;
+      case State.DELETING:
+        this._pointComponent.updateData({
+          isDisabled: true,
+          isDeleting: true,
+        });
+        break;
+      case State.ABORTING:
+        this._pointinListComponent.shake(resetFormState);
+        this._pointComponent.shake(resetFormState);
+        break;
     }
   }
 
@@ -99,7 +138,6 @@ export default class TripPoint {
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       update,
     );
-    this._replaceFormToCard();
   }
 
   _handleDeleteClick(point = undefined) {

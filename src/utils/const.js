@@ -39,17 +39,22 @@ const MenuItem = {
   STATS: 'STATS',
 };
 
-const TRIP_TYPES = [
-  'taxi',
-  'bus',
-  'train',
-  'ship',
-  'transport',
-  'drive',
-  'flight',
-  'check-in',
-  'sightseeing',
-  'restaurant',
-];
+const TRIP_TYPES = {
+  TAXI: 'Taxi',
+  BUS: 'Bus',
+  TRAIN: 'Train',
+  SHIP: 'Ship',
+  DRIVE: 'Drive',
+  FLIGHT: 'Flight',
+  CHECK_IN: 'Check-in',
+  SIGHTSEEING: 'Sightseeing',
+  RESTAURANT: 'Restaurant',
+};
 
-export {TRIP_TYPES, SORT_TYPE, SET_FLATPICKR, UserAction, UpdateType, FilterType, Mode, MenuItem};
+const State = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+  ABORTING: 'ABORTING',
+};
+
+export {TRIP_TYPES, State, SORT_TYPE, SET_FLATPICKR, UserAction, UpdateType, FilterType, Mode, MenuItem};
