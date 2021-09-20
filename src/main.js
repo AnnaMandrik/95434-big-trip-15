@@ -20,6 +20,7 @@ const tripMainElement = document.querySelector('.trip-main');
 const tripControlsNaElement = tripMainElement.querySelector('.trip-controls__navigation');
 const tripControlsFiltersElement = tripMainElement.querySelector('.trip-controls__filters');
 const tripEventsElement = document.querySelector('.trip-events');
+const pageBodyContainer = document.querySelectorAll('.page-body__container');
 
 const tripPointsSortedByStart = data.sort(sortStartDateUp);
 render(tripMainElement, new RouteInfoView(tripPointsSortedByStart), RenderPosition.AFTERBEGIN); //Инфо о путешествии
@@ -37,25 +38,34 @@ buttonNewEvent.addEventListener('click', (evt) => {
   buttonNewEvent.disabled = true;
 });
 
+// const activateCreateTripPointButton = (updateType) => {
+//   if (updateType === UpdateType.INIT) {
+//     buttonNewEvent.disabled = false;
+//   }
+// };
+
 let statsComponent = null;
 
 const handleSiteMenuClick = (menuItem) => {
-  const inputFilters = document.querySelectorAll('.trip-filters__filter-input');
+  const inputFilters = tripControlsFiltersElement.querySelectorAll('.trip-filters__filter-input');
   switch (menuItem) {
     case MenuItem.TABLE:
       tripRoutePresenter.init();
       filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
       remove(statsComponent);
       buttonNewEvent.disabled = false;
+      pageBodyContainer.forEach((item) => item.classList.remove('page-body__container-line'));
       break;
 
     case MenuItem.STATS:
       tripRoutePresenter.destroy();
       statsComponent = new StatsView(pointsModel.getPoints());
       render(tripEventsElement, statsComponent, RenderPosition.BEFOREEND);
+      statsComponent.renderCharts();
       buttonNewEvent.disabled = true;
       inputFilters.forEach((input) => {
         input.disabled = true;
+        pageBodyContainer.forEach((item) => item.classList.add('page-body__container-line'));
       });
       break;
   }
