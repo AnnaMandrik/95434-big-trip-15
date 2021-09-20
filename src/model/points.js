@@ -7,7 +7,6 @@ export default class Points extends AbstractObserver {
   }
 
   setPoints(updateType, data) {
-    console.log(data);
     this._data = [...data];
     this._notify(updateType);
   }
@@ -17,7 +16,7 @@ export default class Points extends AbstractObserver {
   }
 
   updatePoint(updateType, update) {
-    const index = this._data.findIndex((point) => point.id === update.id);
+    const index = this._data.findIndex((data) => data.id === update.id);
 
     if (index === -1) {
       throw new Error('Can\'t update unexisting point');
@@ -42,7 +41,7 @@ export default class Points extends AbstractObserver {
   }
 
   deletePoint(updateType, update) {
-    const index = this._data.findIndex((point) => point.id === update.id);
+    const index = this._data.findIndex((data) => data.id === update.id);
 
     if (index === -1) {
       throw new Error('Can\'t delete unexisting point');
@@ -66,10 +65,10 @@ export default class Points extends AbstractObserver {
         price: point.base_price,
         isFavorite: point.is_favorite,
         id: point.id,
+        offers: point.offers ? point.offers : [],
       },
     };
 
-    // delete adaptedPoint.type;
     delete adaptedPoint.date_from;
     delete adaptedPoint.date_to;
     delete adaptedPoint.is_favorite;
@@ -87,6 +86,8 @@ export default class Points extends AbstractObserver {
         'is_favorite': point.isFavorite ? point.isFavorite : false,
         'base_price': point.price,
         'id': point.id,
+        'type': point.type,
+        'offers': point.offers ? point.offers : [],
       },
     };
 

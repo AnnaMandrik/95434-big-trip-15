@@ -1,3 +1,4 @@
+
 const SORT_TYPE = {
   DEFAULT: 'Day',
   PRICE: 'Price',
@@ -39,17 +40,17 @@ const MenuItem = {
   STATS: 'STATS',
 };
 
-const TRIP_TYPES = {
-  TAXI: 'Taxi',
-  BUS: 'Bus',
-  TRAIN: 'Train',
-  SHIP: 'Ship',
-  DRIVE: 'Drive',
-  FLIGHT: 'Flight',
-  CHECK_IN: 'Check-in',
-  SIGHTSEEING: 'Sightseeing',
-  RESTAURANT: 'Restaurant',
-};
+const TRIP_TYPES = [
+  'taxi',
+  'bus',
+  'train',
+  'ship',
+  'drive',
+  'flight',
+  'check-in',
+  'sightseeing',
+  'restaurant',
+];
 
 const State = {
   SAVING: 'SAVING',

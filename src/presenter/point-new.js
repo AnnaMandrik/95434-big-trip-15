@@ -2,13 +2,22 @@ import FormPointView from '../view/route-form-edit.js';
 import {RenderPosition, render, remove} from '../utils/render.js';
 import {UserAction, UpdateType} from '../utils/const.js';
 
+const getBlankTripPoint = (tripTypes, destinations) => ({
+  type: tripTypes[0],
+  destination: destinations[0],
+  offers: null,
+  timeFrom: new Date(),
+  timeTo: new Date(),
+  price: 0,
+  isFavorite: false,
+});
 
 export default class NewPoint {
-  constructor(formPointContainer, changeData, offersModel, destinationsModel) {
+  constructor(formPointContainer, changeData) {
     this._formPointContainer = formPointContainer;
     this._changeData = changeData;
-    this._offersModel = offersModel;
-    this._destinationsModel = destinationsModel;
+    // this._offersModel = offersModel;
+    // this._destinationsModel = destinationsModel;
 
     this._pointComponent = null;
 

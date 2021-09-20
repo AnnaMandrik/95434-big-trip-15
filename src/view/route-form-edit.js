@@ -8,7 +8,7 @@ import he from 'he';
 
 
 const BLANK_DATA = {
-  type: TRIP_TYPES.TAXI.toLowerCase(),
+  type: TRIP_TYPES [0],
   destination: {
     name: '',
     description: '',
@@ -72,7 +72,6 @@ const createOffersMarkup = (type, offers, OFFERS, isDisabled) => {
   }).join('');
 };
 
-
 const createPictureMarkup = ({src, description}) => `<img class="event__photo" src="${src}" alt="${description}">`;
 const createPictureMarkupTemplate = ({pictures}) => (
   `<div class="event__photos-container">
@@ -83,8 +82,7 @@ const createPictureMarkupTemplate = ({pictures}) => (
 );
 
 
-const createRouteFormEdit = (OFFERS, DESTINATIONS, data = {}, isEditing) => {
-console.log(data);
+const createRouteFormEdit = (OFFERS, data = {}, isEditing) => {
   const {type, offers, destination, timeFrom, timeTo, price, isOffers, isDescription, isPictures, isDisabled, isSaving, isDeleting} = data;
 
 
@@ -124,7 +122,7 @@ console.log(data);
             ${isDisabled ? 'disabled' : ''}
           >
         <datalist id="destination-list-1">
-            ${createNameDataList(DESTINATIONS)}
+            ${createNameDataList()}
             </datalist>
       </div>
       <div class="event__field-group  event__field-group--time">

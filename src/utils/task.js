@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import {SORT_TYPE} from './const.js';
 
 // const SECONDS_IN_DAY = 86400000;
 // const SECONDS_IN_HOURS = 3600000;
@@ -61,6 +62,17 @@ const sortTime = (pointA, pointB) =>
 const isDatesEqual = (dateA, dateB) =>
   (dateA === null && dateB === null) ? true : dayjs(dateA).isSame(dateB, 'D');
 
+const sortTripPoints = (sortType, tripPoints) => {
+  switch (sortType) {
+    case SORT_TYPE.PRICE:
+      return tripPoints.slice().sort(sortPrice);
+    case SORT_TYPE.TIME:
+      return tripPoints.slice().sort(sortTime);
+    case SORT_TYPE.DEFAULT:
+      return tripPoints.slice().sort(sortStartDateUp);
+  }
+};
 
-export {getDiffDate, sortStartDateUp, sortTime, sortPrice, getDateFormat, getDateISO, getDateHoursMinutes, getDateMonthDay, isDatesEqual, MILLISECONDS_IN_MINUTE};
+
+export {getDiffDate, sortTripPoints, sortStartDateUp, sortTime, sortPrice, getDateFormat, getDateISO, getDateHoursMinutes, getDateMonthDay, isDatesEqual, MILLISECONDS_IN_MINUTE};
 

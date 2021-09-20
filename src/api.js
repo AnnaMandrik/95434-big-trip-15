@@ -38,13 +38,13 @@ export default class Api {
       .then((offers) => [...offers]);
   }
 
-  getData() {
-    return Promise.all([
-      this.getOffers(),
-      this.getDestinations(),
-      this.getPoints(),
-    ]).catch(Api.catchError);
-  }
+  // getData() {
+  //   return Promise.all([
+  //     this.getOffers(),
+  //     this.getDestinations(),
+  //     this.getPoints(),
+  //   ]).catch(Api.catchError);
+  // }
 
 
   updatePoint(point) {

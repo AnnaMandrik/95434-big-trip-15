@@ -10,8 +10,8 @@ export default class TripPoint {
     this._formPointContainer = formPointContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
-    this._offersModel = offersModel;
-    this._destinationsModel = destinationsModel;
+    // this._offersModel = offersModel;
+    // this._destinationsModel = destinationsModel;
 
     this._pointComponent = null;
     this._pointInListComponent = null;
@@ -30,13 +30,12 @@ export default class TripPoint {
 
     const prevPointComponent =  this._pointComponent;
     const prevPointInListComponent = this._pointInListComponent;
-console.log(this._offersModel);
 
-    const destinations = this._destinationsModel.getDestinations();
-    const offers = this._offersModel.getOffers();
+    // const destinations = this._destinationsModel.getDestinations();
+    // const offers = this._offersModel.getOffers();
 
     this._pointComponent = new FormPointView(data);
-    this._pointInListComponent = new ListPointView(offers, destinations, data, true);
+    this._pointInListComponent = new ListPointView(data);
 
     this._pointInListComponent.setEditClickHandler(this._handleEditClick);
     this._pointComponent.setFormSubmitHandler(this._handleFormSubmit);

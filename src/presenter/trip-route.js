@@ -5,7 +5,7 @@ import LoadingView from '../view/loading.js';
 import TripPointPresenter from '../presenter/trip-point.js';
 import NewPointPresenter from '../presenter/point-new.js';
 import {RenderPosition, render, remove} from '../utils/render.js';
-import {sortStartDateUp, sortPrice, sortTime} from '../utils/task.js';
+import {sortTripPoints} from '../utils/task.js';
 import {SORT_TYPE, UserAction, UpdateType, FilterType, State as PointPresenterViewState} from '../utils/const.js';
 import {filter} from '../utils/filter.js';
 
@@ -63,15 +63,7 @@ export default class TripRoute {
     const points = this._pointsModel.getPoints();
     this._filterType = this._filterModel.getFilter();
     const filteredPoints = filter[this._filterType](points);
-
-    switch(this._currentSortType) {
-      case SORT_TYPE.PRICE:
-        return filteredPoints.sort(sortPrice);
-      case SORT_TYPE.TIME:
-        return filteredPoints.sort(sortTime);
-      default:
-        return filteredPoints.sort(sortStartDateUp);
-    }
+    return sortTripPoints(this._currentSortType, filteredPoints);
   }
 
   _handleViewAction(actionType, updateType, update) {

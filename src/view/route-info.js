@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
 import AbstractView from './abstract.js';
 
-const data = [];
-const createRouteInfoTemplate = () => {
+
+const createRouteInfoTemplate = (data = []) => {
   const MAX_PATH_DISPLAY_LENGTH = 3;
   let totalCost = 0;
 
@@ -45,7 +45,7 @@ const createRouteInfoTemplate = () => {
 };
 
 export default class RouteInfo extends AbstractView{
-  constructor() {
+  constructor(data) {
     super();
     this._data = data;
   }
