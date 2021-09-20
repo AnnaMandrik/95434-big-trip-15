@@ -40,17 +40,17 @@ const MenuItem = {
   STATS: 'STATS',
 };
 
-const TRIP_TYPES = [
-  'taxi',
-  'bus',
-  'train',
-  'ship',
-  'drive',
-  'flight',
-  'check-in',
-  'sightseeing',
-  'restaurant',
-];
+const TRIP_TYPES = {
+  TAXI: 'Taxi',
+  BUS: 'Bus',
+  TRAIN: 'Train',
+  SHIP: 'Ship',
+  DRIVE: 'Drive',
+  FLIGHT: 'Flight',
+  CHECK_IN: 'Check-in',
+  SIGHTSEEING: 'Sightseeing',
+  RESTAURANT: 'Restaurant',
+};
 
 const State = {
   SAVING: 'SAVING',

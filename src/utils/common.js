@@ -12,12 +12,18 @@ const getDestination = (city, destination) => destination.find((item) => item.na
 
 const getIsDescription = (city, destination) => {
   const cityDescription = destination.find((item) => item.name === city);
-  return Boolean(cityDescription.description);
+  if (destination.description) {
+    return Boolean(cityDescription.description);
+  }
+  return '';
 };
 
-const getIsPictures = (city, dest) => {
-  const cityDescription = dest.find((item) => item.name === city);
-  return Boolean(cityDescription.pictures.length);
+const getIsPictures = (city, destination) => {
+  const cityDescription = destination.find((item) => item.name === city);
+  if (destination.pictures) {
+    return Boolean(cityDescription.pictures);
+  }
+  return '';
 };
 
 const getIsOffers = (type, offers) => Boolean(getOffersByType(type, offers).length);

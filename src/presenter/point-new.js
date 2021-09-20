@@ -2,22 +2,24 @@ import FormPointView from '../view/route-form-edit.js';
 import {RenderPosition, render, remove} from '../utils/render.js';
 import {UserAction, UpdateType} from '../utils/const.js';
 
-const getBlankTripPoint = (tripTypes, destinations) => ({
-  type: tripTypes[0],
-  destination: destinations[0],
-  offers: null,
-  timeFrom: new Date(),
-  timeTo: new Date(),
-  price: 0,
-  isFavorite: false,
-});
+
+// const BLANK_DATA =  {
+//   type: TRIP_TYPES [0],
+//   destination: [],
+//   timeFrom: new Date(),
+//   timeTo:  new Date(),
+//   price: 0,
+//   offers: [],
+//   id: 0,
+//   isFavorite: false,
+// };
 
 export default class NewPoint {
-  constructor(formPointContainer, changeData) {
+  constructor(formPointContainer, changeData, offersModel, destinationsModel) {
     this._formPointContainer = formPointContainer;
     this._changeData = changeData;
-    // this._offersModel = offersModel;
-    // this._destinationsModel = destinationsModel;
+    this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
 
     this._pointComponent = null;
 
@@ -60,14 +62,6 @@ export default class NewPoint {
     });
   }
 
-  _onEventEscKeyDown(evt) {
-    if( evt.key === 'Escape' ||  evt.key === 'Esc') {
-      evt.preventDefault();
-      this._pointComponent._unlockButton();
-      this.destroy();
-    }
-  }
-
   setAborting() {
     const resetFormState = () => {
       this._pointComponent.updateData({
@@ -78,6 +72,14 @@ export default class NewPoint {
     };
 
     this._pointComponent.shake(resetFormState);
+  }
+
+  _onEventEscKeyDown(evt) {
+    if( evt.key === 'Escape' ||  evt.key === 'Esc') {
+      evt.preventDefault();
+      this._pointComponent._unlockButton();
+      this.destroy();
+    }
   }
 
   _handleFormSubmit(point) {

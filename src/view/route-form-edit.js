@@ -6,9 +6,8 @@ import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import he from 'he';
 
-
 const BLANK_DATA = {
-  type: TRIP_TYPES [0],
+  type: TRIP_TYPES.TAXI.toLowerCase(),
   destination: {
     name: '',
     description: '',
@@ -18,16 +17,16 @@ const BLANK_DATA = {
   timeTo:  new Date(),
   price: 0,
   offers: [],
-  id: 0,
   isFavorite: false,
 };
 
 const getStateValue = (state) => state ? 'Deleting' : 'Delete';
 
-const createNameDataList = (city) => city.map((name) =>
-  `<option value="${name}"></option>`);
+const createNameDataList = (city) =>`<option value="${city}"></option>`;
+const createNameDataListTemplate = (cities) => cities.map((item) => item.name)
+  .map(createNameDataList).join('');
 
-const generateTripTypeListTemplate = (type, types, isDisabled) => {
+const generateTripTypeListTemplate = (type, types, isDisabled) =>
   Object.values(types).map((eventType, index) => {
     const currentType = eventType.toLowerCase();
     const isChecked = currentType === type;
@@ -45,7 +44,7 @@ const generateTripTypeListTemplate = (type, types, isDisabled) => {
   </label>
         </div>`;
   }).join('');
-};
+
 
 const createOffersMarkup = (type, offers, OFFERS, isDisabled) => {
   const allOffers = getOffersByType(type, OFFERS);
@@ -82,11 +81,18 @@ const createPictureMarkupTemplate = ({pictures}) => (
 );
 
 
-const createRouteFormEdit = (OFFERS, data = {}, isEditing) => {
-  const {type, offers, destination, timeFrom, timeTo, price, isOffers, isDescription, isPictures, isDisabled, isSaving, isDeleting} = data;
-
-
-  return `<li class="trip-events__item">
+const createRouteFormEdit = (data, OFFERS, DESTINATIONS, {type,
+  offers,
+  destination,
+  timeFrom, timeTo,
+  price,
+  isOffers,
+  isDescription,
+  isPictures,
+  isDisabled,
+  isSaving,
+  isDeleting}, isEditing) => (
+  `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
     <header class="event__header">
       <div class="event__type-wrapper">
@@ -122,7 +128,7 @@ const createRouteFormEdit = (OFFERS, data = {}, isEditing) => {
             ${isDisabled ? 'disabled' : ''}
           >
         <datalist id="destination-list-1">
-            ${createNameDataList()}
+            ${createNameDataListTemplate(DESTINATIONS)}
             </datalist>
       </div>
       <div class="event__field-group  event__field-group--time">
@@ -156,7 +162,7 @@ const createRouteFormEdit = (OFFERS, data = {}, isEditing) => {
     </header>
     <section class="event__details">
      <section class="event__section  event__section--offers">
-    <h3 class="event__section-title  event__section-title--offers ${isOffers ? '' : 'visually-hidden'}">Offers</h3>' : ''}
+    <h3 class="event__section-title  event__section-title--offers ${isOffers ? '' : 'visually-hidden'}">Offers</h3>
      <div class="event__available-offers">${createOffersMarkup(type, offers, OFFERS)}
      </div>
       </section>
@@ -164,15 +170,15 @@ const createRouteFormEdit = (OFFERS, data = {}, isEditing) => {
       <section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination ${isDescription || isPictures ? '' : 'visually-hidden'}">Destination</h3>
       <p class="event__destination-description">${isDescription ? destination.description : ''}</p>
-      ${isPictures ? createPictureMarkupTemplate(destination) : ''}
+      ${isPictures ? createPictureMarkupTemplate(destination.pictures) : ''}
     </section>
   </section>
 </form>
-</li>`;
-};
+</li>`
+);
 
 export default class FormPoint extends SmartView{
-  constructor(data = BLANK_DATA, OFFERS, DESTINATIONS, isEditing = false) {
+  constructor(OFFERS, DESTINATIONS, data = BLANK_DATA, isEditing = false) {
     super();
     this._offers = OFFERS;
     this._destinations = DESTINATIONS;
@@ -394,8 +400,8 @@ export default class FormPoint extends SmartView{
   static parseDataToState(data) {
     return {
       ...data,
-      isDescription: Boolean(data.destination.description),
-      isPictures: Boolean(data.destination.pictures.length),
+      isDescription: Boolean(data.description),
+      isPictures: Boolean(data.pictures),
       isOffers: Boolean(getOffersByType(data.type, this._offers).length),
       isDisabled: false,
       isSaving: false,

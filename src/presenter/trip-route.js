@@ -12,9 +12,11 @@ import {filter} from '../utils/filter.js';
 
 export default class TripRoute {
   constructor(tripRouteContainer, pointsModel, filterModel, offersModel,destinationsModel, api) {
+    this._tripRouteContainer = tripRouteContainer;
+    this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
-    this._tripRouteContainer = tripRouteContainer;
     this._tripEventListComponent = new TripEventsListView();
     this._tripPointPresenter = {};
     this._filterType = FilterType.EVERYTHING;
@@ -24,8 +26,7 @@ export default class TripRoute {
     this._loadingComponent = new LoadingView();
     this._isLoading = true;
     this._api = api;
-    this._offersModel = offersModel;
-    this._destinationsModel = destinationsModel;
+
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -33,7 +34,8 @@ export default class TripRoute {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
 
-    this._pointNewPresenter = new NewPointPresenter(this._tripRouteContainer, this._handleViewAction, this._destinationsModel, this._offersModel);
+    this._pointNewPresenter = new NewPointPresenter(this._tripRouteContainer, this._handleViewAction,
+      this._offersModel, this._destinationsModel);
   }
 
 

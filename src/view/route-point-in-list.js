@@ -10,7 +10,8 @@ const createRoutePointInList = (data) => {
 
   const tripEventDuration = getDiffDate(dayjs(timeTo).diff(dayjs(timeFrom), 'minute'));
 
-  const createOfferElement =  () => offers.map((item) => `<li class="event__offer">
+  const createOfferElement =  () => offers.map((item) =>
+    `<li class="event__offer">
       <span class="event__offer-title">${item.title}</span>
       &plus;&euro;&nbsp;
       <span class="event__offer-price">${item.price}</span>

@@ -53,14 +53,14 @@ const handleSiteMenuClick = (menuItem) => {
       tripRoutePresenter.destroy();
       tripRoutePresenter.init();
       filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-      // document.querySelector('.trip-tabs__btn-stats').style.pointerEvents = 'AUTO';
+      document.querySelector('.trip-tabs__btn-stats').style.pointerEvents = 'AUTO';
       remove(statsComponent);
       buttonNewEvent.disabled = false;
       pageBodyContainer.forEach((item) => item.classList.remove('page-body__container-line'));
       break;
 
     case MenuItem.STATS:
-      // document.querySelector('.trip-tabs__btn-stats').style.pointerEvents = 'NONE';
+      document.querySelector('.trip-tabs__btn-stats').style.pointerEvents = 'NONE';
       tripRoutePresenter.destroy();
       statsComponent = new StatsView(pointsModel.getPoints());
       render(tripEventsElement, statsComponent, RenderPosition.BEFOREEND);
@@ -110,8 +110,8 @@ api.getOffers()
   })
   .then(() => {
     api.getDestinations()
-      .then((destinations) => {
-        destinationsModel.setDestinations(destinations);
+      .then((destination) => {
+        destinationsModel.setDestinations(destination);
       });
   })
   .then(() => {
@@ -130,3 +130,4 @@ api.getOffers()
       });
   });
 
+export {offersModel, destinationsModel};
