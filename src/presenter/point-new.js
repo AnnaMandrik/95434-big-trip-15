@@ -1,12 +1,14 @@
 import FormPointView from '../view/route-form-edit.js';
 import {RenderPosition, render, remove} from '../utils/render.js';
 import {UserAction, UpdateType} from '../utils/const.js';
-import {nanoid} from 'nanoid';
+
 
 export default class NewPoint {
-  constructor(formPointContainer, changeData) {
+  constructor(formPointContainer, changeData, offersModel, destinationsModel) {
     this._formPointContainer = formPointContainer;
     this._changeData = changeData;
+    this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
 
     this._pointComponent = null;
 
@@ -21,7 +23,10 @@ export default class NewPoint {
       return;
     }
 
-    this._pointComponent = new FormPointView();
+    const offers = this._offersModel.getOffers();
+    const destinations = this._destinationsModel.getDestinations();
+
+    this._pointComponent = new FormPointView(offers, destinations);
     this._pointComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointComponent.setCloseFormButtonClickHandler(this._handleDeleteClick);
     this._pointComponent.setDeleteClickHandler( this._handleDeleteClick);
@@ -48,14 +53,33 @@ export default class NewPoint {
     }
   }
 
+  setSaving() {
+    this._pointComponent.updateData({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this._pointComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this._pointComponent.shake(resetFormState);
+  }
+
   _handleFormSubmit(point) {
     this._pointComponent._unlockButton();
     this._changeData(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      Object.assign({id: nanoid()}, point),
+      point,
     );
-    this.destroy();
+
   }
 
   _handleDeleteClick() {

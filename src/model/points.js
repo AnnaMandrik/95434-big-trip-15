@@ -6,8 +6,10 @@ export default class Points extends AbstractObserver {
     this._data = [];
   }
 
-  setPoints(data) {
+  setPoints(updateType, data) {
     this._data = data.slice();
+
+    this._notify(updateType);
   }
 
   getPoints() {
@@ -52,6 +54,65 @@ export default class Points extends AbstractObserver {
     ];
 
     this._notify(updatePoint);
+  }
+
+  static adaptToClient(point) {
+    const adaptedPoint= Object.assign(
+      {},
+      point,
+      {
+        name: point.destination.name,
+        info: point.destination.description ? point.destination.description : '',
+        photo: point.destination.pictures ? point.destination.pictures : [],
+        timeFrom: point.date_from !== null ? new Date(point.date_from) : point.date_from,
+        timeTo: point.date_to !== null ? new Date(point.date_to) : point.date_to,
+        offers: point['offers'],
+        price: point.base_price,
+        isFavorite: point.is_favorite,
+        type: point.type,
+      },
+    );
+
+    delete adaptedPoint.destination.name;
+    delete adaptedPoint.destination.description;
+    delete adaptedPoint.destination.pictures;
+    delete adaptedPoint.date_from;
+    delete adaptedPoint.date_to;
+    delete adaptedPoint.is_favorite;
+    delete adaptedPoint.base_price;
+    delete adaptedPoint.destination;
+
+    return adaptedPoint;
+  }
+
+  static adaptToServer(point) {
+    const adaptedPoint = Object.assign(
+      {},
+      point,
+      {
+        'date_from': point.timeFrom instanceof Date ? point.timeFrom.toISOString() :new Date,
+        'date_to': point.timeTo instanceof Date ? point.timeTo.toISOString() : new Date,
+        'is_favorite': point.isFavorite,
+        'base_price': point.price,
+        'id': point.id,
+        'type': point.type,
+        'destination.name': point.name,
+        'destination.description': point.info ? point.info : '',
+        'destination.pictures': point.photo ? point.photo : [],
+        'offers': point.offers ? point. offers : [],
+      },
+    );
+
+    delete adaptedPoint.name;
+    delete adaptedPoint.info;
+    delete adaptedPoint.photo;
+    delete adaptedPoint.timeFrom;
+    delete adaptedPoint.timeTo;
+    delete adaptedPoint.isFavorite;
+    delete adaptedPoint.price;
+    delete adaptedPoint.offers;
+
+    return adaptedPoint;
   }
 }
 
