@@ -11,6 +11,7 @@ import OffersModel from './model/offers.js';
 import {RenderPosition, render, remove} from './utils/render.js';
 import {MenuItem, UpdateType, FilterType} from './utils/const.js';
 import Api from './api.js';
+import {showMsgError} from './utils/msg-error.js';
 
 const AUTHORIZATION = 'Basic nuihljlojnu9876b';
 const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
@@ -102,13 +103,11 @@ api.getOffers()
         filterPresenter.init();
         render(tripControlsNavElement, siteMenuComponent, RenderPosition.BEFOREEND);
         siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+      })
+      .catch((error) => {
+        showMsgError();
+        throw new Error(error);
       });
-    // .catch(() => {
-    //  // pointsModel.setPoints(UpdateType.INIT, []);
-    //   infoPresenter.init();
-    //   filterPresenter.init();
-    //   render(tripControlsNavElement, siteMenuComponent, RenderPosition.BEFOREEND);
-    //   siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
-    // });
   });
+
 

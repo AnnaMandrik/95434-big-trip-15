@@ -1,28 +1,28 @@
-// Функция из интернета по генерации случайного числа из диапазона
-// Источник - https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
-const getRandomInteger = (a = 0, b = 1) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
+// // Функция из интернета по генерации случайного числа из диапазона
+// // Источник - https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
+// const getRandomInteger = (a = 0, b = 1) => {
+//   const lower = Math.ceil(Math.min(a, b));
+//   const upper = Math.floor(Math.max(a, b));
 
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
-};
+//   return Math.floor(lower + Math.random() * (upper - lower + 1));
+// };
 
 
-const getRandomArray = (arr) => {
-  const results = [];
-  results.push(arr.slice(0, Math.ceil(Math.random() * arr.length)));
-  return results;
-};
+// const getRandomArray = (arr) => {
+//   const results = [];
+//   results.push(arr.slice(0, Math.ceil(Math.random() * arr.length)));
+//   return results;
+// };
 
 
 const getOffersByType = (type, offers) => {
-  if (!offers) {
-    return [];
-  }
   const currentOffers = offers.find((offer) => offer.type === type);
-  return currentOffers.offers.length ? currentOffers.offers : [];
+  return currentOffers.offers ? currentOffers.offers : [];
 };
+
+
 const getDestination = (city, destination) => destination.find((item) => item.name === city);
+
 
 const getIsDescription = (city, destination) => {
   const cityDescription = destination.find((item) => item.name === city);
@@ -31,6 +31,7 @@ const getIsDescription = (city, destination) => {
   }
   return '';
 };
+
 
 const getIsPictures = (city, destination) => {
   const cityDescription = destination.find((item) => item.name === city);
@@ -43,4 +44,4 @@ const getIsPictures = (city, destination) => {
 const getIsOffers = (type, offers) => Boolean(getOffersByType(type, offers).length);
 
 
-export {getRandomInteger, getRandomArray, getOffersByType, getDestination, getIsDescription, getIsPictures, getIsOffers};
+export {getOffersByType, getDestination, getIsDescription, getIsPictures, getIsOffers};

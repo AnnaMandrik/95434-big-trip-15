@@ -59,7 +59,7 @@ const sortPrice = (pointA, pointB) => pointB.price - pointA.price;
 const sortTime = (pointA, pointB) =>
   dayjs(pointB.timeTo).diff(dayjs(pointB.timeFrom)) - dayjs(pointA.timeTo).diff(dayjs(pointA.timeFrom));
 
-const getMarkupIsElemHave = (elem, markup) => elem ? markup : '';
+// const getMarkupIsElemHave = (elem, markup) => elem ? markup : '';
 
 const isDatesEqual = (dateA, dateB) =>
   (dateA === null && dateB === null) ? true : dayjs(dateA).isSame(dateB, 'D');
@@ -77,5 +77,5 @@ const sortTripPoints = (sortType, tripPoints) => {
 };
 
 
-export {getMarkupIsElemHave, sortTripPoints,  getDiffDate, sortStartDateUp, sortTime, sortPrice, getDateFormat, getDateISO, getDateHoursMinutes, getDateMonthDay, isDatesEqual, MILLISECONDS_IN_MINUTE};
+export {sortTripPoints,  getDiffDate, sortStartDateUp, sortTime, sortPrice, getDateFormat, getDateISO, getDateHoursMinutes, getDateMonthDay, isDatesEqual, MILLISECONDS_IN_MINUTE};
 

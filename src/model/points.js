@@ -70,6 +70,7 @@ export default class Points extends AbstractObserver {
         price: point.base_price,
         isFavorite: point.is_favorite,
         type: point.type,
+        id: point.id,
       },
     );
 
@@ -92,14 +93,14 @@ export default class Points extends AbstractObserver {
       {
         'date_from': point.timeFrom instanceof Date ? point.timeFrom.toISOString() :new Date,
         'date_to': point.timeTo instanceof Date ? point.timeTo.toISOString() : new Date,
-        'is_favorite': point.isFavorite,
+        'is_favorite': point.isFavorite ? point.isFavorite : false,
         'base_price': point.price,
         'id': point.id,
         'type': point.type,
         'destination.name': point.name,
         'destination.description': point.info ? point.info : '',
         'destination.pictures': point.photo ? point.photo : [],
-        'offers': point.offers ? point. offers : [],
+        'offers': point.offers ? point.offers : [],
       },
     );
 

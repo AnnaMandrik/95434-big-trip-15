@@ -73,6 +73,10 @@ export default class TripPoint {
   }
 
   setViewState(state) {
+    if (this._mode === Mode.DEFAULT) {
+      return;
+    }
+
     const resetFormState = () => {
       this._pointComponent.updateData({
         isDisabled: false,

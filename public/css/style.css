@@ -1008,3 +1008,20 @@ main {
 .shake {
   animation: shake 0.6s;
 }
+
+.msg__container {
+  background-color: rgb(70, 153, 246);
+  height: 40px;
+  width: 100%;
+  position: fixed;
+  top: 120px;
+  border: 3px solid rgb(251, 197, 17);
+}
+
+.msg__text {
+  display: block;
+  padding-top: 10px;
+  color:rgb(255, 255, 255);
+  font-size: 28px;
+  text-align: center;
+}
