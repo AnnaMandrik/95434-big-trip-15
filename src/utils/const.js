@@ -57,5 +57,13 @@ const State = {
   ABORTING: 'ABORTING',
 };
 
+const BAR_HEIGHT = 55;
+const SCALE = 5;
+const ChartTitle = {
+  MONEY: 'MONEY',
+  TYPE: 'TYPE',
+  TIME: 'TIME-SPEND',
+};
 
-export {TYPES, State, SORT_TYPE, SET_FLATPICKR, UserAction, UpdateType, FilterType, Mode, MenuItem};
+
+export {BAR_HEIGHT, SCALE, ChartTitle, TYPES, State, SORT_TYPE, SET_FLATPICKR, UserAction, UpdateType, FilterType, Mode, MenuItem};

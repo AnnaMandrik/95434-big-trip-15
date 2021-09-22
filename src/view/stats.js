@@ -1,15 +1,7 @@
 import AbstractView from './abstract.js';
 import {getChartData, renderChart} from '../utils/statistics.js';
 import {MILLISECONDS_IN_MINUTE, getDiffDate} from '../utils/task.js';
-
-
-const BAR_HEIGHT = 55;
-const SCALE = 5;
-const ChartTitle = {
-  MONEY: 'MONEY',
-  TYPE: 'TYPE',
-  TIME: 'TIME-SPEND',
-};
+import {BAR_HEIGHT, SCALE, ChartTitle} from '../utils/const.js';
 
 const renderMoneyChart = (ctx, chartData = [], title) => {
   const options = {
