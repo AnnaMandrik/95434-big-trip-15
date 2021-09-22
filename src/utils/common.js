@@ -1,18 +1,31 @@
-// Функция из интернета по генерации случайного числа из диапазона
-// Источник - https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
-const getRandomInteger = (a = 0, b = 1) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
+const getOffersByType = (type, offers) => {
 
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
+  if (!offers) {
+    return [];
+  }
+  const currentOffers = offers.find((offer) => offer.type.toLowerCase() === type.toLowerCase());
+  if (!currentOffers) {
+    return [];
+  }
+  return currentOffers.offers.length ? currentOffers.offers : [];
 };
 
 
-const getRandomArray = (arr) => {
-  const results = [];
-  results.push(arr.slice(0, Math.ceil(Math.random() * arr.length)));
-  return results;
+const getDestination = (city, destination) => destination.find((item) => item.name === city);
+
+
+const getIsDescription = (city, info) => {
+  const cityDescription = info.find((item) => item.name === city);
+  return cityDescription;
 };
 
 
-export {getRandomInteger, getRandomArray};
+const getIsPictures = (city, photo) => {
+  const cityDescription = photo.filter((item) => item.name === city);
+  return cityDescription;
+};
+
+const getIsOffers = (type, offers) => Boolean(getOffersByType(type, offers).length);
+
+
+export {getOffersByType, getDestination, getIsDescription, getIsPictures, getIsOffers};
