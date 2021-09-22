@@ -7,7 +7,7 @@ import he from 'he';
 import {getOffersByType, getDestination, getIsDescription, getIsPictures, getIsOffers} from '../utils/common.js';
 
 const BLANK_DATA = {
-  type: [],
+  type: TYPES[0],
   name: '',
   timeFrom: new Date(),
   timeTo:  new Date(),
@@ -22,73 +22,28 @@ const BLANK_DATA = {
 const getFlagValue = (bool) => bool ? 'Deleting' : 'Delete';
 
 const createOptionTemplate = (city) => `<option value="${city}"></option>`;
-const createNameDataList = (dest) => dest.map((item) => item.name).map(createOptionTemplate).join('');
+const createNameDataList = (dest = []) => dest.map((item) => item.name).map(createOptionTemplate).join('');
 
 
-// const createNameDataList = (city) => city.map((name) =>
-//   `<option value="${name}"></option>`).join('');
+const createIconList = (type, isDisabled) =>
+  TYPES.map((eventType, index) => {
+    const currentType = eventType.toLowerCase();
+    const isTypeChecked = currentType === type;
 
-// const createNameDataList = () => `<datalist id="destination-list-1">
-// ${POINTS_CITIES.reduce((template, name) => `${template  }<option value="${name}"></option>`, '')}
-// </datalist>`;
-
-const createTripTypeItem = (type, isChecked = false, isDisabled) => `<div class="event__type-item">
-  <input id="event-type-${type.toLowerCase()}-1" class="event__type-input
-  visually-hidden" type="radio" name="event-type"
-  value="${type.toLowerCase()}" ${isChecked ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
-  <label class="event__type-label  event__type-label--${type.toLowerCase()}"
-  for="event-type-${type.toLowerCase()}-1">${type}</label>
-</div>`;
-const generateTripTypeListTemplate = (type) =>
-  TYPES.reduce((template, tripType) => template + createTripTypeItem(tripType, tripType === type), '');
-
-
-// const createOfferMarkup = (offer, isDisabled) => offer
-//   ? offer.map((item) => {
-//     const isSelected = offer.some((userOffer) => offer.title === userOffer.title);
-//     return `<div class="event__offer-selector">
-//     <input class="event__offer-checkbox  visually-hidden"
-//     id="${item.type}-${item.id}" " type="checkbox"
-//     name="event-offer-${item.type}"  ${isSelected ? 'checked' : ''}
-//     ${isDisabled ? 'disabled' : ''}>
-//     <label class="event__offer-label" for="${item.type}-${item.id}">
-//       <span class="event__offer-title">${item.offers.title}</span>
-//       &plus;&euro;&nbsp;
-//       <span class="even__offer-price">${item.offers.price}</span>
-//     </label>
-//   </div>`;}) : '';
-
-// const isCheckedOffer = (availableOffer, checkedOffers) => {
-//   if (availableOffer && checkedOffers) {
-//     return checkedOffers.some((item) => [item.title].indexOf(availableOffer.title) !== -1);
-//   }
-// };
-
-// const createOfferMarkup = (availableOffers, checkedOffers, type) => {
-//   let id = 1;
-//   if (availableOffers) {
-//     return availableOffers
-//       .filter((item) => item.type === type)[0]
-//       .offers.map((item) => `<div class="event__offer-selector">
-//         <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}" type="checkbox"
-//          name="event-offer-${item.title}" data-title="${item.title}"
-//         ${isCheckedOffer(item, checkedOffers) ? 'checked' : ''}>
-//         <label class="event__offer-label" for="event-offer-${id++}">
-//           <span class="event__offer-title">${item.title}</span>
-//           &plus;&euro;&nbsp;
-//           <span class="event__offer-price">${item.price}</span>
-//         </label>
-//       </div>
-//       `).join(' ');
-//   }
-// };
-
-// const createOfferMarkupArr = (OFFERS, type) =>
-//   OFFERS.filter((i) => i.type === type)[0];
-
-// const createPictureMarkup = (photo) => photo
-//   ? photo.map((item) => `<img class="event__photo" src="${item.src}" alt="${item.description}">`).join(' ')
-//   : '';
+    return `<div class="event__type-item">
+        <input
+          id="event-type-${currentType}-${index}"
+          class="event__type-input  visually-hidden"
+          type="radio" name="event-type"
+          value="${currentType}"
+          ${isTypeChecked ? 'checked' : ''}
+          ${isDisabled ? 'disabled' : ''}
+        >
+        <label class="event__type-label  event__type-label--${currentType}" for="event-type-${currentType}-${index}">
+          ${eventType}
+        </label>
+      </div>`;
+  }).join('');
 
 
 const createOfferTemplate = (type, offers, OFFERS, isDisabled) => {
@@ -97,7 +52,7 @@ const createOfferTemplate = (type, offers, OFFERS, isDisabled) => {
   return allOffers.map((offer, idx) => {
     const isOfferSelected = offers.some((userOffer) => offer.title === userOffer.title);
     return `
-    <div class="event__offer-selector">
+<div class="event__offer-selector">
       <input
         class="event__offer-checkbox visually-hidden"
         id="event-offer-${idx}"
@@ -117,18 +72,10 @@ const createOfferTemplate = (type, offers, OFFERS, isDisabled) => {
   }).join('');
 };
 
-// const createPictureMarkup = (elem = []) => {
-//   if (elem.length === 0) {
-//     return '';
-//   }
-//   return elem
-//     .map((item) => `<img class="event__photo" src="${item.src}" alt="${item.description}">`)
-//     .join(' ');
-// };
+const createPhotoTemplate = ({src, description}) =>
+  `<img class="event__photo" src="${src}" alt="${description}">`;
 
-const createPhotoTemplate = ({src, description}) => `<img class="event__photo" src="${src}" alt="${description}">`;
-
-const createPhotoContainerTemplate = (photo) => (
+const createPhotoContainerTemplate = (photo = []) => (
   `<div class="event__photos-container">
     <div class="event__photos-tape">
       ${photo.map(createPhotoTemplate).join('')}
@@ -137,24 +84,22 @@ const createPhotoContainerTemplate = (photo) => (
 );
 
 const createRouteFormEdit = (data, OFFERS, DESTINATIONS, isEditing) => {
-  // const destinationName = DESTINATIONS.map((i) => i.name);
   const {type, name, timeFrom, timeTo, price, offers, info,
-    photo, id, isDisabled, isSaving, isDeleting, isOffers, isDescription, isPictures} = data;
-
+    photo, isDisabled, isSaving, isDeleting, isOffers} = data;
 
   return `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
     <header class="event__header">
       <div class="event__type-wrapper">
-        <label class="event__type  event__type-btn" for="event-type-toggle-${id}">
+        <label class="event__type  event__type-btn" for="event-type-toggle-1">
           <span class="visually-hidden">Choose event type</span>
-          <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event ${type} icon">
+          <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
         </label>
-        <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${id}" type="checkbox" ${isDisabled ? 'disabled' : ''}>
+        <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${isDisabled ? 'disabled' : ''}>
         <div class="event__type-list">
           <fieldset class="event__type-group">
             <legend class="visually-hidden">Event type</legend>
-           ${generateTripTypeListTemplate(id, TYPES)}
+           ${createIconList(TYPES)}
           </fieldset>
         </div>
       </div>
@@ -162,7 +107,7 @@ const createRouteFormEdit = (data, OFFERS, DESTINATIONS, isEditing) => {
         <label class="event__label  event__type-output" for="event-destination-1">
           ${type}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name ? he.encode(name.toString()) : ''}"
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" required name="event-destination" value="${name ? he.encode(name.toString()) : ''}"
         list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
         <datalist id="destination-list-1">
             ${createNameDataList(DESTINATIONS)}
@@ -180,7 +125,7 @@ const createRouteFormEdit = (data, OFFERS, DESTINATIONS, isEditing) => {
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value=${price ? he. encode(price.toString()) : ''} ${isDisabled ? 'disabled' : ''}>
+        <input class="event__input  event__input--price" id="event-price-1" type="number" required name="event-price" value=${price ? he. encode(price.toString()) : ''} ${isDisabled ? 'disabled' : ''}>
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit"
@@ -205,9 +150,9 @@ const createRouteFormEdit = (data, OFFERS, DESTINATIONS, isEditing) => {
         </section>
 
         <section class="event__section  event__section--destination">
-        <h3 class="event__section-title  event__section-title--destination ${isDescription || isPictures ? '' : 'visually-hidden'}">Destination</h3>
-        <p class="event__destination-description">${isDescription ? info : ''}</p>
-        ${isPictures ? createPhotoContainerTemplate(photo) : ''}
+        <h3 class="event__section-title  event__section-title--destination ${info || photo ? '' : 'visually-hidden'}">Destination</h3>
+        <p class="event__destination-description">${info ? info : ''}</p>
+        ${createPhotoContainerTemplate(photo)}
       </section>
     </section>
   </form>
@@ -215,7 +160,7 @@ const createRouteFormEdit = (data, OFFERS, DESTINATIONS, isEditing) => {
 };
 
 export default class FormPoint extends SmartView{
-  constructor(data = BLANK_DATA, OFFERS = [], DESTINATIONS = [], isEditing = false) {
+  constructor(OFFERS = [], DESTINATIONS = [], data = BLANK_DATA, isEditing = false) {
     super();
     this._state = FormPoint.parseDataToState(data);
     this._offers = OFFERS;
@@ -353,10 +298,6 @@ export default class FormPoint extends SmartView{
 
   _destinationChangeHandler(evt) {
     evt.preventDefault();
-
-    // const destinationFilter = this._destinations.filter((i) =>
-    //   i.name = evt.target.value);
-
     document.querySelectorAll('#destination-list-1 option')
       .forEach((city) => {
         if (city.value !== evt.target.value) {
@@ -364,10 +305,11 @@ export default class FormPoint extends SmartView{
           evt.target.reportValidity();
         } else {
           this.updateData({
-            name: getDestination(evt.target.value, this._destinations),
-            isDescription:  getIsDescription(evt.target.value, this._destinations),
-            isPictures: getIsPictures(evt.target.value, this._destinations),
+            name: getDestination(evt.target.value, this._destinations).name,
+            info:  getIsDescription(evt.target.value, this._destinations).description,
+            photo: getIsPictures(evt.target.value, this._destinations)[0].pictures,
           });
+          this._state.info === getIsDescription(evt.target.value, this._destinations);
         }
       });
   }
@@ -395,21 +337,8 @@ export default class FormPoint extends SmartView{
     }
   }
 
-  // _offersSelectionHandler(evt) {
-  //   evt.preventDefault();
-
-  //   const offerCopy = this._offers;
-
-  //   const getFilterOffersForType = () =>  offerCopy.filter((elem) =>
-  //     this._state.type === elem.type.toLowerCase());
-
-  //   this.updateData({
-  //     offers: getFilterOffersForType(),
-  //   });
-  // }
-
   _offersSelectionHandler(evt) {
-    // evt.preventDefault();
+    evt.preventDefault();
     const { price, title } = evt.target.dataset;
 
     this.updateData({

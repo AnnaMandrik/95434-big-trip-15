@@ -1,9 +1,7 @@
 import AbstractView from './abstract.js';
-// import Chart from 'chart.js';
-// import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {getChartData, renderChart} from '../utils/statistics.js';
 import {MILLISECONDS_IN_MINUTE, getDiffDate} from '../utils/task.js';
-// import {data} from '../mock/data.js';
+
 
 const BAR_HEIGHT = 55;
 const SCALE = 5;
@@ -76,7 +74,6 @@ export default class Stats extends AbstractView {
     this._moneyCtx = null;
     this._typeCtx = null;
     this._timeCtx = null;
-    // this._setCharts();
   }
 
   getTemplate() {

@@ -34,7 +34,7 @@ export default class TripPoint {
     const offers = this._offersModel.getOffers();
     const destinations = this._destinationsModel.getDestinations();
 
-    this._pointComponent = new FormPointView(data, offers, destinations);
+    this._pointComponent = new FormPointView(offers, destinations, data, true);
     this._pointInListComponent = new ListPointView(data, offers, destinations);
 
     this._pointInListComponent.setEditClickHandler(this._handleEditClick);

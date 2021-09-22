@@ -28,7 +28,6 @@ export default class Points extends AbstractObserver {
       update,
       ...this._data.slice(index + 1),
     ];
-
     this._notify(updatePoint, update);
   }
 
@@ -97,9 +96,11 @@ export default class Points extends AbstractObserver {
         'base_price': point.price,
         'id': point.id,
         'type': point.type,
-        'destination.name': point.name,
-        'destination.description': point.info ? point.info : '',
-        'destination.pictures': point.photo ? point.photo : [],
+        destination: {
+          name: point.name,
+          description: point.info ? point.info : ' ',
+          pictures: point.photo ? point.photo : [],
+        },
         'offers': point.offers ? point.offers : [],
       },
     );
@@ -111,8 +112,6 @@ export default class Points extends AbstractObserver {
     delete adaptedPoint.timeTo;
     delete adaptedPoint.isFavorite;
     delete adaptedPoint.price;
-    delete adaptedPoint.offers;
-
     return adaptedPoint;
   }
 }

@@ -3,7 +3,6 @@ import StatsView from './view/stats.js';
 import TripRoutePresenter from './presenter/trip-route.js';
 import FilterPresenter from './presenter/filter.js';
 import InfoPresenter from './presenter/info.js';
-//import {data} from './mock/data.js';
 import PointsModel from './model/points.js';
 import FilterModel from './model/filter.js';
 import DestinationModel from './model/destination.js';
