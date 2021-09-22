@@ -31,10 +31,10 @@ export default class TripPoint {
     const prevPointComponent =  this._pointComponent;
     const prevPointInListComponent = this._pointInListComponent;
 
-    const destinations = this._destinationsModel.getDestinations();
     const offers = this._offersModel.getOffers();
+    const destinations = this._destinationsModel.getDestinations();
 
-    this._pointComponent = new FormPointView(data, offers, destinations);
+    this._pointComponent = new FormPointView(offers, destinations, data, true);
     this._pointInListComponent = new ListPointView(data, offers, destinations);
 
     this._pointInListComponent.setEditClickHandler(this._handleEditClick);
@@ -54,7 +54,7 @@ export default class TripPoint {
 
     if (this._mode === Mode.EDITING) {
       replace(this._pointInListComponent, prevPointComponent);
-      this._mode = Mode.DEFAULT;
+      this._mode === Mode.DEFAULT;
     }
 
     remove(prevPointInListComponent);
@@ -99,8 +99,8 @@ export default class TripPoint {
         });
         break;
       case State.ABORTING:
-        this._pointinListComponent.shake(resetFormState);
         this._pointComponent.shake(resetFormState);
+        this._pointInListComponent.shake(resetFormState);
         break;
     }
   }

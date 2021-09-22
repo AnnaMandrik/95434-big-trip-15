@@ -1,12 +1,12 @@
 import PointsModel from './model/points.js';
 
-
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
   POST: 'POST',
   DELETE: 'DELETE',
 };
+
 
 export default class Api {
   constructor(endPoint, authorization) {
@@ -21,8 +21,7 @@ export default class Api {
   }
 
   getDestinations() {
-    return this._load({
-      url: 'destinations',
+    return this._load({url: 'destinations',
       method: Method.GET,
     })
       .then(Api.toJSON)
@@ -30,22 +29,12 @@ export default class Api {
   }
 
   getOffers() {
-    return this._load({
-      url: 'offers',
+    return this._load({url: 'offers',
       method: Method.GET,
     })
       .then(Api.toJSON)
       .then((offers) => [...offers]);
   }
-
-  // getData() {
-  //   return Promise.all([
-  //     this.getOffers(),
-  //     this.getDestinations(),
-  //     this.getPoints(),
-  //   ]).catch(Api.catchError);
-  // }
-
 
   updatePoint(point) {
     return this._load({
@@ -96,7 +85,6 @@ export default class Api {
     if (!response.ok) {
       throw new Error(`${response.status}: ${response.statusText}`);
     }
-
     return response;
   }
 

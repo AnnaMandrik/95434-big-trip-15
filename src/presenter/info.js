@@ -1,6 +1,5 @@
 import RouteInfoView from '../view/route-info.js';
-import {sortTripPoints} from '../utils/task.js';
-import {SORT_TYPE} from '../utils/const.js';
+import {sortStartDateUp} from '../utils/task.js';
 import {RenderPosition, render, replace, remove} from '../utils/render.js';
 
 export default class Info {
@@ -15,10 +14,15 @@ export default class Info {
   }
 
   init() {
-    const sortedTripPoints = sortTripPoints(SORT_TYPE.DEFAULT, this._tripPointModel.getPoints());
+    const points = this._getSortedPoints();
+
+    if (points.length === 0) {
+      return '';
+    }
+
     const prevInfoComponent = this._infoComponent;
 
-    this._infoComponent = new RouteInfoView(sortedTripPoints);
+    this._infoComponent = new RouteInfoView(points);
 
     if (prevInfoComponent === null) {
       render(this._container, this._infoComponent, RenderPosition.AFTERBEGIN);
@@ -31,5 +35,9 @@ export default class Info {
 
   _handleModelEvent() {
     this.init();
+  }
+
+  _getSortedPoints() {
+    return this._tripPointModel.getPoints().slice().sort(sortStartDateUp);
   }
 }

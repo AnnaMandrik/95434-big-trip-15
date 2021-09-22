@@ -7,7 +7,8 @@ export default class Points extends AbstractObserver {
   }
 
   setPoints(updateType, data) {
-    this._data = [...this._data,...data];
+    this._data = data.slice();
+
     this._notify(updateType);
   }
 
@@ -15,7 +16,7 @@ export default class Points extends AbstractObserver {
     return this._data;
   }
 
-  updatePoint(updateType, update) {
+  updatePoint(updatePoint, update) {
     const index = this._data.findIndex((data) => data.id === update.id);
 
     if (index === -1) {
@@ -27,20 +28,19 @@ export default class Points extends AbstractObserver {
       update,
       ...this._data.slice(index + 1),
     ];
-
-    this._notify(updateType, update);
+    this._notify(updatePoint, update);
   }
 
-  addPoint(updateType, update) {
+  addPoint(updatePoint, update) {
     this._data = [
       update,
       ...this._data,
     ];
 
-    this._notify(updateType, update);
+    this._notify(updatePoint, update);
   }
 
-  deletePoint(updateType, update) {
+  deletePoint(updatePoint, update) {
     const index = this._data.findIndex((data) => data.id === update.id);
 
     if (index === -1) {
@@ -52,52 +52,67 @@ export default class Points extends AbstractObserver {
       ...this._data.slice(index + 1),
     ];
 
-    this._notify(updateType);
+    this._notify(updatePoint);
   }
 
   static adaptToClient(point) {
-    const adaptedPoint= {
-      ...point,
-      ...{
-        type: point.type,
+    const adaptedPoint= Object.assign(
+      {},
+      point,
+      {
+        name: point.destination.name,
+        info: point.destination.description ? point.destination.description : '',
+        photo: point.destination.pictures ? point.destination.pictures : [],
         timeFrom: point.date_from !== null ? new Date(point.date_from) : point.date_from,
         timeTo: point.date_to !== null ? new Date(point.date_to) : point.date_to,
+        offers: point['offers'],
         price: point.base_price,
         isFavorite: point.is_favorite,
+        type: point.type,
         id: point.id,
-        offers: point.offers ? point.offers : [],
       },
-    };
+    );
 
+    delete adaptedPoint.destination.name;
+    delete adaptedPoint.destination.description;
+    delete adaptedPoint.destination.pictures;
     delete adaptedPoint.date_from;
     delete adaptedPoint.date_to;
     delete adaptedPoint.is_favorite;
     delete adaptedPoint.base_price;
+    delete adaptedPoint.destination;
 
     return adaptedPoint;
   }
 
   static adaptToServer(point) {
-    const adaptedPoint = {
-      ...point,
-      ...{
-        'date_from': point.timeFrom instanceof Date ? point.timeFrom.toISOString() : new Date,
+    const adaptedPoint = Object.assign(
+      {},
+      point,
+      {
+        'date_from': point.timeFrom instanceof Date ? point.timeFrom.toISOString() :new Date,
         'date_to': point.timeTo instanceof Date ? point.timeTo.toISOString() : new Date,
         'is_favorite': point.isFavorite ? point.isFavorite : false,
         'base_price': point.price,
         'id': point.id,
         'type': point.type,
+        destination: {
+          name: point.name,
+          description: point.info ? point.info : ' ',
+          pictures: point.photo ? point.photo : [],
+        },
         'offers': point.offers ? point.offers : [],
       },
-    };
+    );
 
+    delete adaptedPoint.name;
+    delete adaptedPoint.info;
+    delete adaptedPoint.photo;
     delete adaptedPoint.timeFrom;
     delete adaptedPoint.timeTo;
     delete adaptedPoint.isFavorite;
     delete adaptedPoint.price;
-
     return adaptedPoint;
-
   }
 }
 

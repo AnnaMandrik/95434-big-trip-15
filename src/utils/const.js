@@ -1,4 +1,3 @@
-
 const SORT_TYPE = {
   DEFAULT: 'Day',
   PRICE: 'Price',
@@ -40,17 +39,17 @@ const MenuItem = {
   STATS: 'STATS',
 };
 
-const TRIP_TYPES = {
-  TAXI: 'Taxi',
-  BUS: 'Bus',
-  TRAIN: 'Train',
-  SHIP: 'Ship',
-  DRIVE: 'Drive',
-  FLIGHT: 'Flight',
-  CHECK_IN: 'Check-in',
-  SIGHTSEEING: 'Sightseeing',
-  RESTAURANT: 'Restaurant',
-};
+const TYPES = [
+  'taxi',
+  'bus',
+  'train',
+  'ship',
+  'drive',
+  'flight',
+  'check-in',
+  'sightseeing',
+  'restaurant',
+];
 
 const State = {
   SAVING: 'SAVING',
@@ -58,4 +57,13 @@ const State = {
   ABORTING: 'ABORTING',
 };
 
-export {TRIP_TYPES, State, SORT_TYPE, SET_FLATPICKR, UserAction, UpdateType, FilterType, Mode, MenuItem};
+const BAR_HEIGHT = 55;
+const SCALE = 5;
+const ChartTitle = {
+  MONEY: 'MONEY',
+  TYPE: 'TYPE',
+  TIME: 'TIME-SPEND',
+};
+
+
+export {BAR_HEIGHT, SCALE, ChartTitle, TYPES, State, SORT_TYPE, SET_FLATPICKR, UserAction, UpdateType, FilterType, Mode, MenuItem};

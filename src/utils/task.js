@@ -1,11 +1,10 @@
 import dayjs from 'dayjs';
 import {SORT_TYPE} from './const.js';
 
-// const SECONDS_IN_DAY = 86400000;
-// const SECONDS_IN_HOURS = 3600000;
 const MINUTES_IN_A_DAY = 60 * 24;
 const MINUTES_IN_A_HOUR = 60;
 const MILLISECONDS_IN_MINUTE = 60 * 100;
+
 
 const getDateFormat = ((date) => dayjs(date).format('DD/MM/YYHH:mm'));
 const getDateISO = ((date) => dayjs(date).format('YYYY-MM-DDTHH:mm'));
@@ -36,20 +35,6 @@ const getDiffDate = (diffInMinutes) => {
   return formattedDiff;
 };
 
-
-// const getDiffDate = (dateTo, dateFrom) => {
-//   const diff = dayjs(dateTo).diff(dayjs(dateFrom));
-//   if (diff === 0) {
-//     return '';
-//   } if (diff > SECONDS_IN_DAY) {
-//     return `${dayjs(diff).format('DD')  }D ${  dayjs(diff).format('hh')  }H ${  dayjs(diff).format('mm')  }M`;
-//   } if (diff <= SECONDS_IN_HOURS) {
-//     return `${dayjs(diff).format('mm')  }M`;
-//   } if (diff <= SECONDS_IN_DAY) {
-//     return `${dayjs(diff).format('hh')  }H ${  dayjs(diff).format('mm')  }M`;
-//   }
-// };
-
 const sortStartDateUp = (pointA, pointB) =>
   dayjs(pointA.timeFrom).diff(pointB.timeFrom);
 
@@ -59,8 +44,10 @@ const sortPrice = (pointA, pointB) => pointB.price - pointA.price;
 const sortTime = (pointA, pointB) =>
   dayjs(pointB.timeTo).diff(dayjs(pointB.timeFrom)) - dayjs(pointA.timeTo).diff(dayjs(pointA.timeFrom));
 
+
 const isDatesEqual = (dateA, dateB) =>
   (dateA === null && dateB === null) ? true : dayjs(dateA).isSame(dateB, 'D');
+
 
 const sortTripPoints = (sortType, tripPoints) => {
   switch (sortType) {
@@ -68,11 +55,11 @@ const sortTripPoints = (sortType, tripPoints) => {
       return tripPoints.slice().sort(sortPrice);
     case SORT_TYPE.TIME:
       return tripPoints.slice().sort(sortTime);
-    case SORT_TYPE.DEFAULT:
+    default:
       return tripPoints.slice().sort(sortStartDateUp);
   }
 };
 
 
-export {getDiffDate, sortTripPoints, sortStartDateUp, sortTime, sortPrice, getDateFormat, getDateISO, getDateHoursMinutes, getDateMonthDay, isDatesEqual, MILLISECONDS_IN_MINUTE};
+export {sortTripPoints,  getDiffDate, sortStartDateUp, sortTime, sortPrice, getDateFormat, getDateISO, getDateHoursMinutes, getDateMonthDay, isDatesEqual, MILLISECONDS_IN_MINUTE};
 

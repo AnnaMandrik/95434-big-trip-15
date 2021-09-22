@@ -1,9 +1,10 @@
 import dayjs from 'dayjs';
 import AbstractView from './abstract.js';
 
+const MAX_PATH_DISPLAY_LENGTH = 3;
 
-const createRouteInfoTemplate = (data = []) => {
-  const MAX_PATH_DISPLAY_LENGTH = 3;
+const createRouteInfoTemplate = (data) => {
+
   let totalCost = 0;
 
   const getRouteInfo = () => {
@@ -14,13 +15,13 @@ const createRouteInfoTemplate = (data = []) => {
   };
 
   const routePath = data.reduce((path, point, index) => {
-    const {destination, offers, price } = point;
+    const {name, offers, price } = point;
     totalCost += price;
     if (offers) {
-      offers.forEach(() => totalCost += price);  // считает сумму
+      offers.forEach((offer) => totalCost += offer.price);  // считает сумму
     }
-    if (index === 0 || path[path.length - 1] !== destination.name) {
-      path.push(destination.name);                                       // собирает названия
+    if (index === 0 || path[path.length - 1] !== name) {
+      path.push(name);                                       // собирает названия
     }
     return path;
   }, []);

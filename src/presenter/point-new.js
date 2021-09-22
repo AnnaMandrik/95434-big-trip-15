@@ -3,17 +3,6 @@ import {RenderPosition, render, remove} from '../utils/render.js';
 import {UserAction, UpdateType} from '../utils/const.js';
 
 
-// const BLANK_DATA =  {
-//   type: TRIP_TYPES [0],
-//   destination: [],
-//   timeFrom: new Date(),
-//   timeTo:  new Date(),
-//   price: 0,
-//   offers: [],
-//   id: 0,
-//   isFavorite: false,
-// };
-
 export default class NewPoint {
   constructor(formPointContainer, changeData, offersModel, destinationsModel) {
     this._formPointContainer = formPointContainer;
@@ -33,10 +22,11 @@ export default class NewPoint {
     if (this._pointComponent !== null) {
       return;
     }
-    // const offers = this._offersModel.getOffers();
-    // const destinations = this._destinationsModel.getDestinations();
 
-    this._pointComponent = new FormPointView();
+    const offers = this._offersModel.getOffers();
+    const destinations = this._destinationsModel.getDestinations();
+
+    this._pointComponent = new FormPointView(offers, destinations);
     this._pointComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointComponent.setCloseFormButtonClickHandler(this._handleDeleteClick);
     this._pointComponent.setDeleteClickHandler( this._handleDeleteClick);
@@ -53,6 +43,14 @@ export default class NewPoint {
     remove(this._pointComponent);
     this._pointComponent = null;
     document.removeEventListener('keydown', this._onEventEscKeyDown);
+  }
+
+  _onEventEscKeyDown(evt) {
+    if( evt.key === 'Escape' ||  evt.key === 'Esc') {
+      evt.preventDefault();
+      this._pointComponent._unlockButton();
+      this.destroy();
+    }
   }
 
   setSaving() {
@@ -74,14 +72,6 @@ export default class NewPoint {
     this._pointComponent.shake(resetFormState);
   }
 
-  _onEventEscKeyDown(evt) {
-    if( evt.key === 'Escape' ||  evt.key === 'Esc') {
-      evt.preventDefault();
-      this._pointComponent._unlockButton();
-      this.destroy();
-    }
-  }
-
   _handleFormSubmit(point) {
     this._pointComponent._unlockButton();
     this._changeData(
@@ -89,6 +79,7 @@ export default class NewPoint {
       UpdateType.MINOR,
       point,
     );
+
   }
 
   _handleDeleteClick() {

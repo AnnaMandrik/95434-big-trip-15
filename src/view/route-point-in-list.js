@@ -2,16 +2,12 @@ import dayjs from 'dayjs';
 import {getDateISO, getDateHoursMinutes, getDateMonthDay, getDiffDate} from '../utils/task.js';
 import AbstractView from './abstract.js';
 
-
 const createRoutePointInList = (data) => {
-  const {type, destination, offers, price, isFavorite, timeFrom, timeTo} = data;
-
-  //const checkType = Object.values(TRIP_TYPES).filter((item) => item.toLowerCase() === type).join();
+  const {type, name, price, offers, isFavorite, timeFrom, timeTo} = data;
 
   const tripEventDuration = getDiffDate(dayjs(timeTo).diff(dayjs(timeFrom), 'minute'));
 
-  const createOfferElement =  () => offers.map((item) =>
-    `<li class="event__offer">
+  const createOfferElement =  () => offers.map((item) => `<li class="event__offer">
       <span class="event__offer-title">${item.title}</span>
       &plus;&euro;&nbsp;
       <span class="event__offer-price">${item.price}</span>
@@ -22,9 +18,9 @@ const createRoutePointInList = (data) => {
     <div class="event">
       <time class="event__date" datetime="${getDateISO(timeFrom)}">${getDateMonthDay(timeFrom)}</time>
       <div class="event__type">
-        <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
+        <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${type} ${destination.name}</h3>
+      <h3 class="event__title">${type} ${name}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime=${getDateISO(timeFrom)}>${getDateHoursMinutes(timeFrom)}</time>
@@ -38,7 +34,7 @@ const createRoutePointInList = (data) => {
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-        ${offers ? createOfferElement(offers).join('') : ''}
+        ${createOfferElement(offers).join('')}
       </ul>
       <button class="event__favorite-btn ${isFavorite ? 'event__favorite-btn--active' : ''}" type="button">
         <span class="visually-hidden">Add to favorite</span>

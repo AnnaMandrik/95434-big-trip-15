@@ -11,4 +11,3 @@ export default class Loading extends AbstractView {
     return createLoadingTemplate();
   }
 }
-

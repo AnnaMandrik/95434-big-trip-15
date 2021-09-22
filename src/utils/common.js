@@ -1,29 +1,28 @@
-
 const getOffersByType = (type, offers) => {
+
   if (!offers) {
     return [];
   }
-
-  const currentOffers = offers.find((offer) => offer.type === type);
+  const currentOffers = offers.find((offer) => offer.type.toLowerCase() === type.toLowerCase());
+  if (!currentOffers) {
+    return [];
+  }
   return currentOffers.offers.length ? currentOffers.offers : [];
 };
 
+
 const getDestination = (city, destination) => destination.find((item) => item.name === city);
 
-const getIsDescription = (city, destination) => {
-  const cityDescription = destination.find((item) => item.name === city);
-  if (destination.description) {
-    return Boolean(cityDescription.description);
-  }
-  return '';
+
+const getIsDescription = (city, info) => {
+  const cityDescription = info.find((item) => item.name === city);
+  return cityDescription;
 };
 
-const getIsPictures = (city, destination) => {
-  const cityDescription = destination.find((item) => item.name === city);
-  if (destination.pictures) {
-    return Boolean(cityDescription.pictures);
-  }
-  return '';
+
+const getIsPictures = (city, photo) => {
+  const cityDescription = photo.filter((item) => item.name === city);
+  return cityDescription;
 };
 
 const getIsOffers = (type, offers) => Boolean(getOffersByType(type, offers).length);
