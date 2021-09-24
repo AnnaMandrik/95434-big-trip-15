@@ -1,4 +1,4 @@
-import SiteFiltersView from '../view/filters.js';
+import SiteFiltersView from '../view/site-filters.js';
 import {filter} from '../utils/filter.js';
 import {RenderPosition, render, remove, replace} from '../utils/render.js';
 import {UpdateType, FilterType} from '../utils/const.js';

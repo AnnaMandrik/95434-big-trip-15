@@ -13,19 +13,13 @@ const getOffersByType = (type, offers) => {
 
 const getDestination = (city, destination) => destination.find((item) => item.name === city);
 
+const getIsDescription = (city, info) => info.find((item) => item.name === city);
 
-const getIsDescription = (city, info) => {
-  const cityDescription = info.find((item) => item.name === city);
-  return cityDescription;
-};
-
-
-const getIsPictures = (city, photo) => {
-  const cityDescription = photo.filter((item) => item.name === city);
-  return cityDescription;
-};
+const getIsPictures = (city, photo) => photo.filter((item) => item.name === city);
 
 const getIsOffers = (type, offers) => Boolean(getOffersByType(type, offers).length);
 
+const isEscEvent = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
 
-export {getOffersByType, getDestination, getIsDescription, getIsPictures, getIsOffers};
+
+export {isEscEvent, getOffersByType, getDestination, getIsDescription, getIsPictures, getIsOffers};

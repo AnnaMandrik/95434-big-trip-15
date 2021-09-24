@@ -1,9 +1,9 @@
-import TripSortView from '../view/route-sorting.js';
-import EmptyListView from '../view/route-form-create.js';
+import RouteSortView from '../view/route-sort.js';
+import EmptyListView from '../view/empty-list.js';
 import LoadingView from '../view/loading.js';
-import TripEventsListView from '../view/points-list.js';
+import PointsListView from '../view/points-list.js';
 import TripPointPresenter from '../presenter/trip-point.js';
-import NewPointPresenter from '../presenter/point-new.js';
+import NewPointPresenter from '../presenter/new-point.js';
 import {RenderPosition, render, remove} from '../utils/render.js';
 import {sortTripPoints} from '../utils/task.js';
 import {SORT_TYPE, UserAction, UpdateType, FilterType, State as PointPresenterViewState} from '../utils/const.js';
@@ -17,7 +17,7 @@ export default class TripRoute {
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
     this._tripRouteContainer = tripRouteContainer;
-    this._tripEventListComponent = new TripEventsListView();
+    this._tripEventListComponent = new PointsListView();
     this._tripPointPresenter = {};
     this._filterType = FilterType.EVERYTHING;
     this._currentSortType = SORT_TYPE.DEFAULT;
@@ -147,7 +147,7 @@ export default class TripRoute {
     if (this._tripSortComponent !== null) {
       this._tripSortComponent = null;
     }
-    this._tripSortComponent = new TripSortView(this._currentSortType);
+    this._tripSortComponent = new RouteSortView(this._currentSortType);
     this._tripSortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
     render(this._tripRouteContainer, this._tripSortComponent, RenderPosition.AFTERBEGIN);
   }

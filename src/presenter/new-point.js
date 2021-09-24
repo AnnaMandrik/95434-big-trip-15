@@ -1,6 +1,7 @@
-import FormPointView from '../view/route-form-edit.js';
+import FormPointView from '../view/form-point.js';
 import {RenderPosition, render, remove} from '../utils/render.js';
 import {UserAction, UpdateType} from '../utils/const.js';
+import {isEscEvent} from '../utils/common.js';
 
 
 export default class NewPoint {
@@ -46,7 +47,7 @@ export default class NewPoint {
   }
 
   _onEventEscKeyDown(evt) {
-    if( evt.key === 'Escape' ||  evt.key === 'Esc') {
+    if (isEscEvent(evt)) {
       evt.preventDefault();
       this._pointComponent._unlockButton();
       this.destroy();

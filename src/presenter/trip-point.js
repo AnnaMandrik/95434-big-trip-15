@@ -1,8 +1,9 @@
-import FormPointView from '../view/route-form-edit.js';
-import ListPointView from '../view/route-point-in-list.js';
+import FormPointView from '../view/form-point.js';
+import ListPointView from '../view/list-point.js';
 import {RenderPosition, render,replace, remove} from '../utils/render.js';
 import {UserAction, UpdateType, Mode, State} from '../utils/const.js';
 import {isDatesEqual} from '../utils/task.js';
+import {isEscEvent} from '../utils/common.js';
 
 
 export default class TripPoint {
@@ -119,7 +120,7 @@ export default class TripPoint {
   }
 
   _onEventEscKeyDown(evt) {
-    if( evt.key === 'Escape' ||  evt.key === 'Esc') {
+    if (isEscEvent(evt)) {
       evt.preventDefault();
       this._pointComponent.reset(this._data);
       this._replaceFormToCard();

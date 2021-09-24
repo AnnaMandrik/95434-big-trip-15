@@ -1,4 +1,4 @@
-import SiteMenuView from './view/menu.js';
+import SiteMenuView from './view/site-menu.js';
 import StatsView from './view/stats.js';
 import TripRoutePresenter from './presenter/trip-route.js';
 import FilterPresenter from './presenter/filter.js';
@@ -19,8 +19,8 @@ const tripMainElement = document.querySelector('.trip-main');
 const tripControlsNavElement = tripMainElement.querySelector('.trip-controls__navigation');
 const tripControlsFiltersElement = tripMainElement.querySelector('.trip-controls__filters');
 const tripEventsElement = document.querySelector('.trip-events');
-const pageBodyContainer = document.querySelectorAll('.page-body__container');
-const buttonNewEvent = document.querySelector('.trip-main__event-add-btn');
+const pageBodyContainerElement = document.querySelectorAll('.page-body__container');
+const buttonNewEventElement = document.querySelector('.trip-main__event-add-btn');
 
 
 const api = new Api(END_POINT, AUTHORIZATION);
@@ -35,16 +35,16 @@ const filterPresenter = new FilterPresenter(tripControlsFiltersElement, filterMo
 const infoPresenter = new InfoPresenter(tripMainElement, pointsModel);
 
 
-buttonNewEvent.addEventListener('click', (evt) => {
+buttonNewEventElement.addEventListener('click', (evt) => {
   evt.preventDefault();
   tripRoutePresenter.createPoint();
-  buttonNewEvent.disabled = true;
+  buttonNewEventElement.disabled = true;
 });
 
 
 const activateCreateTripPointButton = (updateType) => {
   if (updateType === UpdateType.INIT) {
-    buttonNewEvent.disabled = false;
+    buttonNewEventElement.disabled = false;
   }
 };
 
@@ -60,8 +60,8 @@ const handleSiteMenuClick = (menuItem) => {
       filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
       document.querySelector('.trip-tabs__btn-stats').style.pointerEvents = 'AUTO';
       remove(statsComponent);
-      buttonNewEvent.disabled = false;
-      pageBodyContainer.forEach((item) => item.classList.remove('page-body__container-line'));
+      buttonNewEventElement.disabled = false;
+      pageBodyContainerElement.forEach((item) => item.classList.remove('page-body__container-line'));
       break;
 
     case MenuItem.STATS:
@@ -70,10 +70,10 @@ const handleSiteMenuClick = (menuItem) => {
       statsComponent = new StatsView(pointsModel.getPoints());
       render(tripEventsElement, statsComponent, RenderPosition.BEFOREEND);
       statsComponent.renderCharts();
-      buttonNewEvent.disabled = true;
+      buttonNewEventElement.disabled = true;
       inputFilters.forEach((input) => {
         input.disabled = true;
-        pageBodyContainer.forEach((item) => item.classList.add('page-body__container-line'));
+        pageBodyContainerElement.forEach((item) => item.classList.add('page-body__container-line'));
       });
       break;
   }
@@ -81,7 +81,7 @@ const handleSiteMenuClick = (menuItem) => {
 
 pointsModel.addObserver(activateCreateTripPointButton);
 tripRoutePresenter.init();
-buttonNewEvent.disabled = true;
+buttonNewEventElement.disabled = true;
 
 
 api.getOffers()
