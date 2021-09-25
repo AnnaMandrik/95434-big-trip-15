@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
 import AbstractView from './abstract.js';
-
-const MAX_PATH_DISPLAY_LENGTH = 3;
+import {MAX_PATH_DISPLAY_LENGTH} from '../utils/const.js';
 
 const createRouteInfoTemplate = (data) => {
 

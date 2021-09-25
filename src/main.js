@@ -1,4 +1,4 @@
-import SiteMenuView from './view/menu.js';
+import SiteMenuView from './view/site-menu.js';
 import StatsView from './view/stats.js';
 import TripRoutePresenter from './presenter/trip-route.js';
 import FilterPresenter from './presenter/filter.js';
@@ -9,42 +9,51 @@ import DestinationModel from './model/destination.js';
 import OffersModel from './model/offers.js';
 import {RenderPosition, render, remove} from './utils/render.js';
 import {MenuItem, UpdateType, FilterType} from './utils/const.js';
-import Api from './api.js';
+import { isOnline } from './utils/common.js';
+import { toast } from './utils/toast.js';
 import {showMsgError} from './utils/msg-error.js';
+import Api from './api/api.js';
+import Store from './api/store.js';
+import Provider from './api/provider.js';
 
 const AUTHORIZATION = 'Basic nuihljlojnu9876b';
 const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
+const STORE_PREFIX = 'big-trip-cache';
+const STORE_VER = 'v15';
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
 const tripMainElement = document.querySelector('.trip-main');
 const tripControlsNavElement = tripMainElement.querySelector('.trip-controls__navigation');
 const tripControlsFiltersElement = tripMainElement.querySelector('.trip-controls__filters');
 const tripEventsElement = document.querySelector('.trip-events');
-const pageBodyContainer = document.querySelectorAll('.page-body__container');
-const buttonNewEvent = document.querySelector('.trip-main__event-add-btn');
+const pageBodyContainerElement = document.querySelectorAll('.page-body__container');
+const buttonNewEventElement = document.querySelector('.trip-main__event-add-btn');
 
 
 const api = new Api(END_POINT, AUTHORIZATION);
+const store = new Store(STORE_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, store);
 const pointsModel = new PointsModel();
 const filterModel = new FilterModel();
 const destinationsModel = new DestinationModel();
 const offersModel = new OffersModel();
 const siteMenuComponent = new SiteMenuView();
 const tripRoutePresenter = new TripRoutePresenter(tripEventsElement, pointsModel,
-  filterModel, api, offersModel, destinationsModel);
+  filterModel, apiWithProvider, offersModel, destinationsModel);
 const filterPresenter = new FilterPresenter(tripControlsFiltersElement, filterModel, pointsModel);
 const infoPresenter = new InfoPresenter(tripMainElement, pointsModel);
 
 
-buttonNewEvent.addEventListener('click', (evt) => {
+buttonNewEventElement.addEventListener('click', (evt) => {
   evt.preventDefault();
   tripRoutePresenter.createPoint();
-  buttonNewEvent.disabled = true;
+  buttonNewEventElement.disabled = true;
 });
 
 
 const activateCreateTripPointButton = (updateType) => {
   if (updateType === UpdateType.INIT) {
-    buttonNewEvent.disabled = false;
+    buttonNewEventElement.disabled = false;
   }
 };
 
@@ -60,8 +69,13 @@ const handleSiteMenuClick = (menuItem) => {
       filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
       document.querySelector('.trip-tabs__btn-stats').style.pointerEvents = 'AUTO';
       remove(statsComponent);
-      buttonNewEvent.disabled = false;
-      pageBodyContainer.forEach((item) => item.classList.remove('page-body__container-line'));
+      buttonNewEventElement.disabled = false;
+      pageBodyContainerElement.forEach((item) => item.classList.remove('page-body__container-line'));
+      if (!isOnline()) {
+        toast('You can\'t create new point offline');
+        siteMenuComponent.setMenuItem(MenuItem.TASKS);
+        break;
+      }
       break;
 
     case MenuItem.STATS:
@@ -70,10 +84,10 @@ const handleSiteMenuClick = (menuItem) => {
       statsComponent = new StatsView(pointsModel.getPoints());
       render(tripEventsElement, statsComponent, RenderPosition.BEFOREEND);
       statsComponent.renderCharts();
-      buttonNewEvent.disabled = true;
+      buttonNewEventElement.disabled = true;
       inputFilters.forEach((input) => {
         input.disabled = true;
-        pageBodyContainer.forEach((item) => item.classList.add('page-body__container-line'));
+        pageBodyContainerElement.forEach((item) => item.classList.add('page-body__container-line'));
       });
       break;
   }
@@ -81,21 +95,21 @@ const handleSiteMenuClick = (menuItem) => {
 
 pointsModel.addObserver(activateCreateTripPointButton);
 tripRoutePresenter.init();
-buttonNewEvent.disabled = true;
+buttonNewEventElement.disabled = true;
 
 
-api.getOffers()
+apiWithProvider.getOffers()
   .then((offers) => {
     offersModel.setOffers(offers);
   })
   .then(() => {
-    api.getDestinations()
+    apiWithProvider.getDestinations()
       .then((destinations) => {
         destinationsModel.setDestinations(destinations);
       });
   })
   .then(() => {
-    api.getPoints()
+    apiWithProvider.getPoints()
       .then((points) => {
         pointsModel.setPoints(UpdateType.INIT, points);
         infoPresenter.init();
@@ -108,5 +122,18 @@ api.getOffers()
         throw new Error(error);
       });
   });
+
+window.addEventListener('load', () => {
+  navigator.serviceWorker.register('/sw.js');
+});
+
+window.addEventListener('online', () => {
+  document.title = document.title.replace(' [offline]', '');
+  apiWithProvider.sync();
+});
+
+window.addEventListener('offline', () => {
+  document.title += ' [offline]';
+});
 
 

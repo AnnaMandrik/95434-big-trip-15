@@ -1,4 +1,4 @@
-import SiteFiltersView from '../view/filters.js';
+import SiteFiltersView from '../view/site-filters.js';
 import {filter} from '../utils/filter.js';
 import {RenderPosition, render, remove, replace} from '../utils/render.js';
 import {UpdateType, FilterType} from '../utils/const.js';
@@ -33,19 +33,6 @@ export default class Filter {
     remove(prevFilterComponent);
   }
 
-  _handleModelEvent() {
-    this.init();
-  }
-
-  _handleFilterTypeChange(filterType) {
-    if (this._filterModel.getFilter() === filterType) {
-      return;
-    }
-
-    this._filterModel.setFilter(UpdateType.MAJOR, filterType);
-
-  }
-
   _getFilters() {
     const points = this._pointsModel.getPoints();
 
@@ -67,4 +54,18 @@ export default class Filter {
       },
     ];
   }
+
+  _handleModelEvent() {
+    this.init();
+  }
+
+  _handleFilterTypeChange(filterType) {
+    if (this._filterModel.getFilter() === filterType) {
+      return;
+    }
+
+    this._filterModel.setFilter(UpdateType.MAJOR, filterType);
+
+  }
+
 }

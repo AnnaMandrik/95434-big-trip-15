@@ -1,9 +1,9 @@
 import dayjs from 'dayjs';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-const getChartData = (data = []) => {
-  // eslint-disable-next-line no-shadow
-  const chartData = data.reduce((chartData, {type, price, timeFrom, timeTo}) => {
+
+const getChartData = (someData = []) => {
+  const anotherChartData = someData.reduce((chartData, {type, price, timeFrom, timeTo}) => {
     if (chartData[type]) {
       chartData[type].money += price;
       chartData[type].type += 1;
@@ -19,8 +19,7 @@ const getChartData = (data = []) => {
     return chartData;
   }, {});
 
-  // eslint-disable-next-line no-shadow
-  return Object.entries(chartData).map(([type, data]) => ({
+  return Object.entries(anotherChartData).map(([type, data]) => ({
     tripType: type.toUpperCase(),
     data,
   }));

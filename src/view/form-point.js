@@ -5,12 +5,13 @@ import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import he from 'he';
 import {getOffersByType, getDestination, getIsDescription, getIsPictures, getIsOffers} from '../utils/common.js';
+import {getActualDate} from '../utils/task.js';
 
 const BLANK_DATA = {
   type: TYPES[0],
   name: '',
-  timeFrom: new Date(),
-  timeTo:  new Date(),
+  timeFrom: getActualDate(),
+  timeTo:  getActualDate(),
   price: null,
   offers: [],
   info: '',
@@ -143,7 +144,7 @@ const createRouteFormEdit = (data, OFFERS, DESTINATIONS, isEditing) => {
     </header>
     <section class="event__details">
         <section class="event__section  event__section--offers">
-          <h3 class="event__section-title  event__section-title--offers ${isOffers ? '' : 'visually-hidden'}">Offers</h3>
+        <h3 class="event__section-title  event__section-title--offers ${isOffers ? '' : 'visually-hidden'}">Offers</h3>
           <div class="event__available-offers">
             ${createOfferTemplate(type, offers, OFFERS)}
           </div>

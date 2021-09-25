@@ -1,8 +1,10 @@
-import FormPointView from '../view/route-form-edit.js';
-import ListPointView from '../view/route-point-in-list.js';
+import FormPointView from '../view/form-point.js';
+import ListPointView from '../view/list-point.js';
 import {RenderPosition, render,replace, remove} from '../utils/render.js';
 import {UserAction, UpdateType, Mode, State} from '../utils/const.js';
 import {isDatesEqual} from '../utils/task.js';
+import {isEscEvent, isOnline} from '../utils/common.js';
+import {toast} from '../utils/toast.js';
 
 
 export default class TripPoint {
@@ -119,7 +121,7 @@ export default class TripPoint {
   }
 
   _onEventEscKeyDown(evt) {
-    if( evt.key === 'Escape' ||  evt.key === 'Esc') {
+    if (isEscEvent(evt)) {
       evt.preventDefault();
       this._pointComponent.reset(this._data);
       this._replaceFormToCard();
@@ -127,11 +129,21 @@ export default class TripPoint {
   }
 
   _handleEditClick() {
+    if (!isOnline()) {
+      toast('You can\'t edit point offline');
+      return;
+    }
+
     this._pointComponent._unlockButton();
     this._replaceCardToForm();
   }
 
   _handleFormSubmit(update) {
+    if (!isOnline()) {
+      toast('You can\'t save point offline');
+      return;
+    }
+
     const isMinorUpdate = !isDatesEqual(this._data.timeFrom, update.timeFrom) || !isDatesEqual(this._data.timeTo, update.timeTo);
     this._changeData(
       UserAction.UPDATE_POINT,
@@ -141,6 +153,11 @@ export default class TripPoint {
   }
 
   _handleDeleteClick(point = undefined) {
+    if (!isOnline()) {
+      toast('You can\'t delete point offline');
+      return;
+    }
+
     this._changeData(
       UserAction.DELETE_POINT,
       UpdateType.MINOR,
@@ -167,4 +184,5 @@ export default class TripPoint {
       ),
     );
   }
+
 }

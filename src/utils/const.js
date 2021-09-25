@@ -65,5 +65,9 @@ const ChartTitle = {
   TIME: 'TIME-SPEND',
 };
 
+const SHAKE_ANIMATION_TIMEOUT = 600;
 
-export {BAR_HEIGHT, SCALE, ChartTitle, TYPES, State, SORT_TYPE, SET_FLATPICKR, UserAction, UpdateType, FilterType, Mode, MenuItem};
+const MAX_PATH_DISPLAY_LENGTH = 3;
+
+
+export {MAX_PATH_DISPLAY_LENGTH, SHAKE_ANIMATION_TIMEOUT, BAR_HEIGHT, SCALE, ChartTitle, TYPES, State, SORT_TYPE, SET_FLATPICKR, UserAction, UpdateType, FilterType, Mode, MenuItem};

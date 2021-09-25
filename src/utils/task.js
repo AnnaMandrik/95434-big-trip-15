@@ -5,6 +5,7 @@ const MINUTES_IN_A_DAY = 60 * 24;
 const MINUTES_IN_A_HOUR = 60;
 const MILLISECONDS_IN_MINUTE = 60 * 100;
 
+const getActualDate = () => dayjs().toDate();
 
 const getDateFormat = ((date) => dayjs(date).format('DD/MM/YYHH:mm'));
 const getDateISO = ((date) => dayjs(date).format('YYYY-MM-DDTHH:mm'));
@@ -61,5 +62,5 @@ const sortTripPoints = (sortType, tripPoints) => {
 };
 
 
-export {sortTripPoints,  getDiffDate, sortStartDateUp, sortTime, sortPrice, getDateFormat, getDateISO, getDateHoursMinutes, getDateMonthDay, isDatesEqual, MILLISECONDS_IN_MINUTE};
+export {getActualDate, sortTripPoints,  getDiffDate, sortStartDateUp, sortTime, sortPrice, getDateFormat, getDateISO, getDateHoursMinutes, getDateMonthDay, isDatesEqual, MILLISECONDS_IN_MINUTE};
 
