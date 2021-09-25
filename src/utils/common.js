@@ -21,5 +21,7 @@ const getIsOffers = (type, offers) => Boolean(getOffersByType(type, offers).leng
 
 const isEscEvent = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
 
+const isOnline = () => window.navigator.onLine;
 
-export {isEscEvent, getOffersByType, getDestination, getIsDescription, getIsPictures, getIsOffers};
+
+export {isOnline, isEscEvent, getOffersByType, getDestination, getIsDescription, getIsPictures, getIsOffers};
